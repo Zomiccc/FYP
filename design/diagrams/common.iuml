@@ -1,0 +1,18 @@
+skinparam dpi 200
+skinparam shadowing false
+skinparam defaultFontName Helvetica
+skinparam defaultFontSize 12
+skinparam ArrowColor #1B4A4A
+skinparam ArrowFontSize 11
+skinparam ClassBorderColor #3D8C80
+skinparam ClassBackgroundColor #EEF6F4
+skinparam ClassHeaderBackgroundColor #D5EAE5
+skinparam ClassAttributeIconSize 0
+skinparam EntityBorderColor #3D8C80
+skinparam EntityBackgroundColor #EEF6F4
+skinparam PackageBorderColor #8FB5AE
+skinparam PackageBackgroundColor #FBFDFC
+skinparam PackageFontColor #1B4A4A
+skinparam NoteBackgroundColor #F6EBD1
+skinparam NoteBorderColor #C99A2E
+hide circle

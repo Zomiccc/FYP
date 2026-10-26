@@ -1,0 +1,474 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Legal Advisor Prototype</title>
+<style>
+:root{
+  --teal-900:#0F3D3A; --teal-700:#1B4A4A; --teal-500:#2A8C7E; --teal-300:#7FB8AE; --teal-100:#EAF4F2; --teal-50:#F5FAF9;
+  --gold:#C99A2E; --gold-100:#F6EBD1; --rust:#B5523B; --rust-100:#F6E1DB;
+  --ink:#1F2A2E; --muted:#5B6B70; --line:#D5E3E0; --bg:#F3F6F6; --white:#fff;
+  --radius:10px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 "Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+a{color:var(--teal-500);text-decoration:none;cursor:pointer}
+button{font:inherit;cursor:pointer}
+/* prototype navigator */
+#protonav{position:sticky;top:0;z-index:50;background:#222;color:#ddd;padding:8px 12px;display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:12px}
+#protonav b{color:#fff;margin-right:8px}
+#protonav a{color:#ddd;padding:4px 8px;border-radius:6px;background:#333}
+#protonav a.on{background:var(--gold);color:#fff}
+body.shot #protonav{display:none}
+/* frame */
+.screen{display:none;width:1280px;min-height:800px;margin:16px auto;background:var(--bg);box-shadow:0 2px 14px rgba(0,0,0,.12);overflow:hidden}
+body.shot .screen{margin:0;box-shadow:none}
+.screen.on{display:flex}
+.side{width:230px;background:var(--teal-900);color:#cfe4df;padding:22px 16px;display:flex;flex-direction:column;gap:4px;flex-shrink:0}
+.brand{display:flex;align-items:center;gap:10px;color:#fff;font-weight:700;font-size:15px;margin-bottom:22px;line-height:1.2}
+.logo{width:36px;height:36px;border-radius:50%;background:var(--gold);display:grid;place-items:center;color:#fff;font-weight:800;font-size:16px;flex-shrink:0}
+.side a{color:#cfe4df;padding:9px 12px;border-radius:8px;display:block}
+.side a.on{background:rgba(255,255,255,.12);color:#fff;font-weight:600}
+.side .role{margin-top:auto;font-size:12px;color:#9fc4bc;border-top:1px solid rgba(255,255,255,.12);padding-top:12px}
+.main{flex:1;display:flex;flex-direction:column;min-width:0}
+.top{height:62px;background:var(--white);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 28px}
+.top h1{font-size:20px;margin:0;color:var(--teal-900)}
+.user{display:flex;align-items:center;gap:10px;color:var(--muted)}
+.av{width:34px;height:34px;border-radius:50%;background:var(--teal-500);color:#fff;display:grid;place-items:center;font-weight:700;font-size:13px;flex-shrink:0}
+.av.gold{background:var(--gold)} .av.slate{background:var(--muted)}
+.content{padding:24px 28px;display:flex;flex-direction:column;gap:18px}
+.card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px}
+.card h2{margin:0 0 10px;font-size:16px;color:var(--teal-900)}
+.row{display:flex;gap:18px}
+.col{display:flex;flex-direction:column;gap:18px}
+.btn{border:none;border-radius:8px;padding:10px 16px;background:var(--teal-500);color:#fff;font-weight:600}
+.btn.dark{background:var(--teal-900)} .btn.gold{background:var(--gold)} .btn.ghost{background:var(--white);color:var(--teal-700);border:1px solid var(--line)}
+.btn.rust{background:var(--rust)}
+.chip{display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:600;background:var(--teal-100);color:var(--teal-700)}
+.chip.gold{background:var(--gold-100);color:#8a6512} .chip.rust{background:var(--rust-100);color:var(--rust)} .chip.dark{background:var(--teal-900);color:#fff} .chip.grey{background:#ECEFF0;color:var(--muted)}
+.muted{color:var(--muted)} .small{font-size:12px}
+input,select,textarea{font:inherit;border:1px solid var(--line);border-radius:8px;padding:10px 12px;width:100%;background:#fff;color:var(--ink)}
+label{font-size:12px;font-weight:600;color:var(--muted);display:block;margin-bottom:5px}
+table{border-collapse:collapse;width:100%}
+th{text-align:left;font-size:12px;color:var(--muted);font-weight:600;padding:8px 10px;border-bottom:1px solid var(--line)}
+td{padding:11px 10px;border-bottom:1px solid var(--line)}
+.stat{flex:1}
+.stat .n{font-size:28px;font-weight:700;color:var(--teal-900)}
+.cite{background:var(--gold-100);color:#8a6512;font-weight:700;font-size:11px;padding:1px 6px;border-radius:5px}
+.bubble{max-width:72%;padding:12px 14px;border-radius:14px;line-height:1.45}
+.bubble.me{align-self:flex-end;background:var(--teal-500);color:#fff;border-bottom-right-radius:4px}
+.bubble.ai{align-self:flex-start;background:var(--white);border:1px solid var(--line);border-bottom-left-radius:4px}
+.check{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px dashed var(--line)}
+.box{width:18px;height:18px;border-radius:4px;border:2px solid var(--teal-500);flex-shrink:0}
+.box.done{background:var(--teal-500)}
+.step{display:flex;gap:14px}
+.dot{width:14px;height:14px;border-radius:50%;background:var(--teal-500);margin-top:4px;flex-shrink:0;box-shadow:0 0 0 4px var(--teal-100)}
+.dot.grey{background:#C9D3D1;box-shadow:0 0 0 4px #EEF2F1}
+.line{width:2px;background:var(--line);margin:2px 0 2px 6px;height:34px}
+.stars{color:var(--gold);letter-spacing:1px}
+.disclaimer{background:var(--gold-100);border-radius:8px;padding:10px 14px;font-size:12px;color:#6d5212}
+.progress{height:8px;background:var(--teal-100);border-radius:6px;overflow:hidden}
+.progress>div{height:100%;background:var(--teal-500)}
+.modal-back{position:absolute;inset:0;background:rgba(15,61,58,.45);display:grid;place-items:center}
+.modal{background:#fff;border-radius:12px;width:470px;padding:24px;box-shadow:0 10px 40px rgba(0,0,0,.25)}
+</style>
+</head>
+<body>
+<nav id="protonav"><b>Prototype screens:</b></nav>
+
+<!-- ============ 1. LOGIN ============ -->
+<section class="screen" id="login" data-title="1. Sign in">
+  <div style="width:560px;background:var(--teal-900);color:#fff;padding:60px 54px;display:flex;flex-direction:column;justify-content:space-between">
+    <div class="brand" style="font-size:18px"><div class="logo">&#9878;</div>AI Powered Legal<br>Advisor and Analyzer</div>
+    <div>
+      <div style="font-size:34px;font-weight:700;line-height:1.2;margin-bottom:16px">Understand your legal problem in simple words.</div>
+      <div style="color:#bcd8d2;font-size:16px">Answers based on verified Pakistani law, with sources you can check, and a path to the right lawyer.</div>
+      <div style="display:flex;gap:10px;margin-top:26px"><span class="chip gold">Property disputes</span><span class="chip gold">Family disputes</span></div>
+    </div>
+    <div class="small" style="color:#9fc4bc">This platform supports legal understanding. It does not replace a qualified lawyer.</div>
+  </div>
+  <div style="flex:1;display:grid;place-items:center">
+    <div style="width:400px" class="col">
+      <div><div style="font-size:24px;font-weight:700;color:var(--teal-900)">Welcome back</div><div class="muted">Sign in to continue</div></div>
+      <div><label>I am a</label>
+        <div style="display:flex;gap:8px"><button class="btn" style="flex:1">Citizen</button><button class="btn ghost" style="flex:1">Lawyer</button><button class="btn ghost" style="flex:1">Admin</button></div></div>
+      <div><label>Email</label><input value="ali.raza@example.com"></div>
+      <div><label>Password</label><input type="password" value="password123"></div>
+      <a class="btn dark" style="text-align:center" data-go="dashboard">Sign in</a>
+      <div class="muted small" style="text-align:center">New here? <a>Create an account</a></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 2. CITIZEN DASHBOARD ============ -->
+<section class="screen" id="dashboard" data-title="2. Citizen dashboard">
+  <aside class="side" data-side="citizen" data-on="dashboard"></aside>
+  <div class="main">
+    <div class="top"><h1>My Cases</h1><div class="user">Ali Raza <div class="av">AR</div></div></div>
+    <div class="content">
+      <div class="row">
+        <div class="card stat"><div class="muted small">Open cases</div><div class="n">2</div></div>
+        <div class="card stat"><div class="muted small">Waiting for your answer</div><div class="n">1</div></div>
+        <div class="card stat"><div class="muted small">Shared with lawyers</div><div class="n">1</div></div>
+        <div class="card stat" style="background:var(--teal-900);border:none;color:#fff;display:flex;flex-direction:column;justify-content:space-between">
+          <div>Have a new legal problem?</div><a class="btn gold" style="align-self:flex-start;margin-top:8px" data-go="newcase">+ New case</a></div>
+      </div>
+      <div class="card">
+        <h2>Recent cases</h2>
+        <table>
+          <tr><th>Case</th><th>Area</th><th>Status</th><th>Last update</th><th></th></tr>
+          <tr><td><b>Landlord asking me to leave in 7 days</b><div class="muted small">Case #C-1042</div></td><td><span class="chip">Property · Tenancy</span></td><td><span class="chip gold">Shared with lawyer</span></td><td class="muted">Today, 10:24</td><td><a data-go="tracking">View &rarr;</a></td></tr>
+          <tr><td><b>Share in father's house</b><div class="muted small">Case #C-1031</div></td><td><span class="chip">Property · Inheritance</span></td><td><span class="chip rust">Needs your answer</span></td><td class="muted">2 days ago</td><td><a data-go="followup">Answer &rarr;</a></td></tr>
+          <tr><td><b>Nikah registration question</b><div class="muted small">Case #C-0987</div></td><td><span class="chip">Family · Marriage</span></td><td><span class="chip grey">Resolved</span></td><td class="muted">12 Sep 2026</td><td><a>View &rarr;</a></td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 3. NEW CASE ============ -->
+<section class="screen" id="newcase" data-title="3. New case">
+  <aside class="side" data-side="citizen" data-on="newcase"></aside>
+  <div class="main">
+    <div class="top"><h1>Start a new case</h1><div class="user">Ali Raza <div class="av">AR</div></div></div>
+    <div class="content">
+      <div class="row">
+        <div class="card" style="flex:2">
+          <h2>1. Tell us what happened</h2>
+          <div class="muted" style="margin-bottom:12px">Write in your own words. You can use English or Roman Urdu.</div>
+          <label>Short title</label><input value="Landlord asking me to leave in 7 days" style="margin-bottom:12px">
+          <label>Describe your problem</label>
+          <textarea rows="7">I rent a house in Lahore. Yesterday my landlord called and told me to leave the house within 7 days. I have a written rent agreement and I have paid rent every month. What can I do?</textarea>
+          <div style="display:flex;gap:10px;margin-top:14px;align-items:center">
+            <a class="btn ghost" data-go="documents">&#128206; Attach documents (optional)</a>
+            <span class="muted small">PDF, JPG or PNG. Scanned papers are fine.</span>
+          </div>
+        </div>
+        <div class="col" style="flex:1">
+          <div class="card">
+            <h2>2. Detected area</h2>
+            <div class="muted small" style="margin-bottom:8px">Our system suggests:</div>
+            <span class="chip">Property</span> <span class="chip">Tenancy and eviction</span>
+            <div class="muted small" style="margin-top:10px">Not right? <a>Change area</a></div>
+          </div>
+          <div class="card" style="background:var(--teal-50)">
+            <h2>What happens next</h2>
+            <div class="small">1. We may ask 1 to 3 short questions.<br>2. We look up the matching Pakistani law.<br>3. You get a simple answer with sources and a checklist.</div>
+          </div>
+          <a class="btn dark" style="text-align:center" data-go="followup">Continue &rarr;</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 4. FOLLOW-UP ============ -->
+<section class="screen" id="followup" data-title="4. Follow-up questions">
+  <aside class="side" data-side="citizen" data-on="dashboard"></aside>
+  <div class="main">
+    <div class="top"><h1>Case #C-1042 · A few quick questions</h1><div class="user">Ali Raza <div class="av">AR</div></div></div>
+    <div class="content" style="flex-direction:row">
+      <div class="card" style="flex:2;display:flex;flex-direction:column;gap:12px;min-height:600px">
+        <div class="bubble me">My landlord says I must leave the house in 7 days. I have a written agreement. What can I do?</div>
+        <div class="bubble ai"><b>Question 1 of 2.</b> Did you receive the notice in writing (a letter or a signed paper), or only verbally?</div>
+        <div class="bubble me">Only on a phone call. Nothing in writing.</div>
+        <div class="bubble ai"><b>Question 2 of 2.</b> When does your rent agreement end? If you are not sure, you can upload it.</div>
+        <div style="margin-top:auto;display:flex;gap:10px">
+          <input placeholder="Type your answer..." value="It ends in March 2027.">
+          <a class="btn" data-go="guidance">Send</a>
+          <a class="btn ghost" data-go="documents">Upload</a>
+        </div>
+      </div>
+      <div class="col" style="flex:1">
+        <div class="card"><h2>Why we ask</h2><div class="small muted">The answer depends on these facts. We only ask what is needed, never more.</div></div>
+        <div class="card"><h2>Facts so far</h2>
+          <div class="check"><div class="box done"></div>Tenant in Lahore</div>
+          <div class="check"><div class="box done"></div>Written rent agreement</div>
+          <div class="check"><div class="box done"></div>Notice was only verbal</div>
+          <div class="check"><div class="box"></div>Agreement end date</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 5. GUIDANCE ============ -->
+<section class="screen" id="guidance" data-title="5. Legal guidance">
+  <aside class="side" data-side="citizen" data-on="dashboard"></aside>
+  <div class="main">
+    <div class="top"><h1>Case #C-1042 · Your guidance</h1><div class="user">Ali Raza <div class="av">AR</div></div></div>
+    <div class="content">
+      <div class="row">
+        <div class="col" style="flex:2">
+          <div class="card">
+            <div style="display:flex;justify-content:space-between;align-items:center"><h2>What the law says, in simple words</h2><span class="chip">&#10003; Every point has a source</span></div>
+            <p style="margin:6px 0 10px;font-size:15px">Based on the rent law sources we found, your landlord has to follow the proper legal process before a tenant can be removed <span class="cite">S1</span>. A phone call alone is usually not treated as a proper notice <span class="cite">S2</span>. Since your written agreement runs until March 2027, its terms also matter <span class="cite">S3</span>.</p>
+            <p style="margin:0 0 12px;font-size:15px"><b>What you can do now:</b> keep paying rent and keep the receipts, ask the landlord to put any notice in writing, and speak to a property lawyer if the pressure continues.</p>
+            <div class="disclaimer">Example guidance for the prototype only. This platform explains the law; it does not replace a qualified lawyer.</div>
+          </div>
+          <div class="card">
+            <h2>Sources used</h2>
+            <table>
+              <tr><th style="width:50px">Ref</th><th>Source</th><th>Section</th><th>Match</th></tr>
+              <tr><td><span class="cite">S1</span></td><td>&lt;Rent law&gt; · eviction process</td><td>Sec. x</td><td>92%</td></tr>
+              <tr><td><span class="cite">S2</span></td><td>&lt;Rent law&gt; · notice to tenant</td><td>Sec. y</td><td>88%</td></tr>
+              <tr><td><span class="cite">S3</span></td><td>&lt;Rules&gt; · tenancy agreements</td><td>Rule z</td><td>81%</td></tr>
+            </table>
+          </div>
+        </div>
+        <div class="col" style="flex:1">
+          <div class="card">
+            <h2>Your evidence checklist</h2>
+            <div class="progress" style="margin-bottom:8px"><div style="width:40%"></div></div>
+            <div class="muted small" style="margin-bottom:6px">2 of 5 ready</div>
+            <div class="check"><div class="box done"></div>Rent agreement <span class="chip" style="margin-left:auto">uploaded</span></div>
+            <div class="check"><div class="box done"></div>Rent receipts</div>
+            <div class="check"><div class="box"></div>Call record with landlord</div>
+            <div class="check"><div class="box"></div>Written notice (if it comes)</div>
+            <div class="check" style="border:none"><div class="box"></div>CNIC copy</div>
+          </div>
+          <div class="card" style="background:var(--teal-900);color:#fff;border:none">
+            <div style="font-weight:700;font-size:16px;margin-bottom:6px">Need a lawyer?</div>
+            <div class="small" style="color:#bcd8d2;margin-bottom:12px">We found verified property lawyers in Lahore.</div>
+            <a class="btn gold" data-go="directory">Find a lawyer &rarr;</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 6. DOCUMENTS ============ -->
+<section class="screen" id="documents" data-title="6. Documents">
+  <aside class="side" data-side="citizen" data-on="documents"></aside>
+  <div class="main">
+    <div class="top"><h1>Case #C-1042 · Documents</h1><div class="user">Ali Raza <div class="av">AR</div></div></div>
+    <div class="content">
+      <div class="card" style="border:2px dashed var(--teal-300);background:var(--teal-50);text-align:center;padding:30px">
+        <div style="font-size:16px;font-weight:600;color:var(--teal-900)">Drag and drop files here, or <a>browse</a></div>
+        <div class="muted small">PDF, JPG, PNG up to 10 MB. Photos of papers are fine; we read them with OCR.</div>
+      </div>
+      <div class="row">
+        <div class="card" style="flex:1">
+          <h2>Uploaded files</h2>
+          <table>
+            <tr><th>File</th><th>Read with</th><th>Status</th></tr>
+            <tr><td><b>rent_agreement.pdf</b><div class="muted small">3 pages · 420 KB</div></td><td><span class="chip">PyMuPDF</span></td><td><span class="chip">Done</span></td></tr>
+            <tr><td><b>receipt_sept.jpg</b><div class="muted small">photo · 1.2 MB</div></td><td><span class="chip gold">OCR</span></td><td><span class="chip">Done</span></td></tr>
+            <tr><td><b>receipt_oct.jpg</b><div class="muted small">photo · 1.1 MB</div></td><td><span class="chip gold">OCR</span></td><td><span class="chip grey">Reading...</span></td></tr>
+          </table>
+        </div>
+        <div class="card" style="flex:1">
+          <h2>Key clauses found in rent_agreement.pdf</h2>
+          <div class="check"><span class="chip">Rent</span>&nbsp; Monthly rent: Rs. 45,000, due by the 5th</div>
+          <div class="check"><span class="chip">Term</span>&nbsp; From 1 April 2026 to 31 March 2027</div>
+          <div class="check"><span class="chip">Notice</span>&nbsp; Either party gives one month written notice</div>
+          <div class="check" style="border:none"><span class="chip">Deposit</span>&nbsp; Security deposit: Rs. 90,000</div>
+          <div class="muted small" style="margin-top:8px">Example data for the prototype.</div>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:flex-end"><a class="btn dark" data-go="guidance">Back to guidance &rarr;</a></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 7. DIRECTORY ============ -->
+<section class="screen" id="directory" data-title="7. Lawyer directory">
+  <aside class="side" data-side="citizen" data-on="directory"></aside>
+  <div class="main">
+    <div class="top"><h1>Find a verified lawyer</h1><div class="user">Ali Raza <div class="av">AR</div></div></div>
+    <div class="content" style="flex-direction:row">
+      <div class="card col" style="width:260px;flex-shrink:0;gap:12px">
+        <h2 style="margin:0">Filters</h2>
+        <div><label>Specialization</label><select><option>Property · Tenancy</option></select></div>
+        <div><label>City</label><select><option>Lahore</option></select></div>
+        <div><label>Fee range (Rs.)</label><select><option>Up to 25,000</option></select></div>
+        <div><label>Experience</label><select><option>5+ years</option></select></div>
+        <div><label>Language</label><select><option>Urdu, English</option></select></div>
+        <div><label>Minimum rating</label><select><option>4 stars and above</option></select></div>
+        <button class="btn">Apply filters</button>
+      </div>
+      <div class="col" style="flex:1;gap:12px">
+        <div class="muted">3 verified lawyers match</div>
+        <div class="card" style="display:flex;gap:16px;align-items:center">
+          <div class="av" style="width:54px;height:54px;font-size:18px">SK</div>
+          <div style="flex:1"><div style="font-weight:700;font-size:16px">Adv. Sana Khan <span class="chip">&#10003; Verified</span></div>
+            <div class="muted small">Property, Tenancy · Lahore · 9 years · Urdu, English</div>
+            <div><span class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span> <span class="small muted">4.8 (36 reviews)</span></div></div>
+          <div style="text-align:right"><div style="font-weight:700">Rs. 15,000 &ndash; 25,000</div><a class="btn" style="display:inline-block;margin-top:8px" data-go="profile">View profile</a></div>
+        </div>
+        <div class="card" style="display:flex;gap:16px;align-items:center">
+          <div class="av gold" style="width:54px;height:54px;font-size:18px">UA</div>
+          <div style="flex:1"><div style="font-weight:700;font-size:16px">Adv. Usman Ahmed <span class="chip">&#10003; Verified</span></div>
+            <div class="muted small">Property, Inheritance · Lahore · 12 years · Urdu, Punjabi</div>
+            <div><span class="stars">&#9733;&#9733;&#9733;&#9733;&#9734;</span> <span class="small muted">4.5 (21 reviews)</span></div></div>
+          <div style="text-align:right"><div style="font-weight:700">Rs. 20,000 &ndash; 25,000</div><a class="btn ghost" style="display:inline-block;margin-top:8px" data-go="profile">View profile</a></div>
+        </div>
+        <div class="card" style="display:flex;gap:16px;align-items:center">
+          <div class="av slate" style="width:54px;height:54px;font-size:18px">FN</div>
+          <div style="flex:1"><div style="font-weight:700;font-size:16px">Adv. Fatima Noor <span class="chip">&#10003; Verified</span></div>
+            <div class="muted small">Property, Tenancy · Lahore · 6 years · Urdu, English</div>
+            <div><span class="stars">&#9733;&#9733;&#9733;&#9733;&#9734;</span> <span class="small muted">4.3 (12 reviews)</span></div></div>
+          <div style="text-align:right"><div style="font-weight:700">Rs. 10,000 &ndash; 18,000</div><a class="btn ghost" style="display:inline-block;margin-top:8px" data-go="profile">View profile</a></div>
+        </div>
+        <div class="muted small">Names and figures are sample data.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 8. PROFILE + SHARE ============ -->
+<section class="screen" id="profile" data-title="8. Lawyer profile + share" style="position:relative">
+  <aside class="side" data-side="citizen" data-on="directory"></aside>
+  <div class="main">
+    <div class="top"><h1>Lawyer profile</h1><div class="user">Ali Raza <div class="av">AR</div></div></div>
+    <div class="content">
+      <div class="card" style="display:flex;gap:20px;align-items:center">
+        <div class="av" style="width:80px;height:80px;font-size:26px">SK</div>
+        <div style="flex:1"><div style="font-size:22px;font-weight:700">Adv. Sana Khan <span class="chip">&#10003; Verified by admin</span></div>
+          <div class="muted">Property and tenancy disputes · Lahore High Court Bar · Licence #LHC-XXXX</div></div>
+        <a class="btn gold">Share my case</a>
+      </div>
+    </div>
+  </div>
+  <div class="modal-back">
+    <div class="modal">
+      <div style="font-size:18px;font-weight:700;color:var(--teal-900);margin-bottom:6px">Share case #C-1042 with Adv. Sana Khan?</div>
+      <div class="muted" style="margin-bottom:14px">The lawyer will be able to see:</div>
+      <div class="check"><div class="box done"></div>Your case description and answers</div>
+      <div class="check"><div class="box done"></div>The guidance and its sources</div>
+      <div class="check"><div class="box done"></div>Uploaded documents (3 files)</div>
+      <div class="check" style="border:none"><div class="box"></div>Your phone number</div>
+      <div class="disclaimer" style="margin:12px 0">You can stop sharing at any time from the case page.</div>
+      <div style="display:flex;gap:10px;justify-content:flex-end"><a class="btn ghost" data-go="directory">Cancel</a><a class="btn" data-go="tracking">I agree, share case</a></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 9. TRACKING ============ -->
+<section class="screen" id="tracking" data-title="9. Case tracking">
+  <aside class="side" data-side="citizen" data-on="dashboard"></aside>
+  <div class="main">
+    <div class="top"><h1>Case #C-1042 · Tracking</h1><div class="user">Ali Raza <div class="av">AR</div></div></div>
+    <div class="content">
+      <div class="card" style="display:flex;justify-content:space-between;align-items:center">
+        <div><div style="font-weight:700;font-size:17px">Landlord asking me to leave in 7 days</div><div class="muted small">Property · Tenancy · Lahore</div></div>
+        <div style="display:flex;gap:8px;align-items:center"><span class="chip gold">In progress with lawyer</span><a class="btn ghost">Stop sharing</a></div>
+      </div>
+      <div class="row">
+        <div class="card" style="flex:2">
+          <h2>Timeline</h2>
+          <div class="step"><div class="dot"></div><div><b>Case created</b><div class="muted small">24 Oct 2026, 09:12</div></div></div><div class="line"></div>
+          <div class="step"><div class="dot"></div><div><b>2 follow-up questions answered</b><div class="muted small">24 Oct 2026, 09:20</div></div></div><div class="line"></div>
+          <div class="step"><div class="dot"></div><div><b>Guidance ready</b> with 3 sources and a 5-item checklist<div class="muted small">24 Oct 2026, 09:21</div></div></div><div class="line"></div>
+          <div class="step"><div class="dot"></div><div><b>Shared with Adv. Sana Khan</b> (consent given)<div class="muted small">25 Oct 2026, 18:40</div></div></div><div class="line"></div>
+          <div class="step"><div class="dot"></div><div><b>Lawyer accepted the case</b><div class="muted small">26 Oct 2026, 10:24 · "I will draft a reply to the landlord."</div></div></div><div class="line"></div>
+          <div class="step"><div class="dot grey"></div><div class="muted"><b>Resolved</b><div class="small">Waiting</div></div></div>
+        </div>
+        <div class="col" style="flex:1">
+          <div class="card"><h2>Your lawyer</h2><div style="display:flex;gap:10px;align-items:center"><div class="av">SK</div><div><b>Adv. Sana Khan</b><div class="muted small">Property · Lahore</div></div></div></div>
+          <div class="card"><h2>Checklist</h2><div class="progress"><div style="width:60%"></div></div><div class="muted small" style="margin-top:6px">3 of 5 ready</div></div>
+          <div class="card"><h2>After it is resolved</h2><div class="small muted">You can rate your lawyer to help other citizens.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 10. LAWYER PORTAL ============ -->
+<section class="screen" id="lawyer" data-title="10. Lawyer portal">
+  <aside class="side" data-side="lawyer" data-on="lawyer"></aside>
+  <div class="main">
+    <div class="top"><h1>Shared cases</h1><div class="user">Adv. Sana Khan <div class="av">SK</div></div></div>
+    <div class="content">
+      <div class="row">
+        <div class="card stat"><div class="muted small">New requests</div><div class="n">2</div></div>
+        <div class="card stat"><div class="muted small">Active cases</div><div class="n">5</div></div>
+        <div class="card stat"><div class="muted small">Resolved this month</div><div class="n">3</div></div>
+        <div class="card stat"><div class="muted small">Rating</div><div class="n">4.8 <span class="stars" style="font-size:16px">&#9733;</span></div></div>
+      </div>
+      <div class="row">
+        <div class="card" style="flex:5">
+          <h2>New case requests</h2>
+          <table>
+            <tr><th>Case</th><th>Area</th><th>Prepared</th><th></th></tr>
+            <tr><td><b>Landlord asking me to leave</b><div class="muted small">Ali R. · Lahore · shared today</div></td><td><span class="chip">Tenancy</span></td><td><span class="chip">3 docs · checklist 3/5</span></td><td style="white-space:nowrap"><button class="btn">Accept</button> <button class="btn ghost">Decline</button></td></tr>
+            <tr><td><b>Neighbour built wall on my plot</b><div class="muted small">Hina S. · Lahore · 1 day ago</div></td><td><span class="chip">Encroachment</span></td><td><span class="chip">2 docs · checklist 2/4</span></td><td style="white-space:nowrap"><button class="btn">Accept</button> <button class="btn ghost">Decline</button></td></tr>
+          </table>
+        </div>
+        <div class="card" style="flex:2">
+          <h2>Post a status update</h2>
+          <label>Case</label><select style="margin-bottom:10px"><option>#C-1042 · Landlord asking me to leave</option></select>
+          <label>New status</label><select style="margin-bottom:10px"><option>In progress</option></select>
+          <label>Note for the citizen</label><textarea rows="3">I will draft a reply to the landlord this week.</textarea>
+          <button class="btn dark" style="margin-top:10px">Send update</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 11. ADMIN ============ -->
+<section class="screen" id="admin" data-title="11. Admin portal">
+  <aside class="side" data-side="admin" data-on="admin"></aside>
+  <div class="main">
+    <div class="top"><h1>Admin dashboard</h1><div class="user">Admin <div class="av slate">AD</div></div></div>
+    <div class="content">
+      <div class="row">
+        <div class="card stat"><div class="muted small">Citizens</div><div class="n">1,284</div></div>
+        <div class="card stat"><div class="muted small">Verified lawyers</div><div class="n">46</div></div>
+        <div class="card stat"><div class="muted small">Open cases</div><div class="n">312</div></div>
+        <div class="card stat"><div class="muted small">Law sections indexed</div><div class="n">2,940</div></div>
+      </div>
+      <div class="row">
+        <div class="card" style="flex:5">
+          <h2>Lawyers waiting for verification</h2>
+          <table>
+            <tr><th>Lawyer</th><th>Licence</th><th>Specialization</th><th>Documents</th><th></th></tr>
+            <tr><td><b>Adv. Bilal Hussain</b><div class="muted small">Rawalpindi</div></td><td>RWP-XXXX</td><td>Family</td><td><a>licence.pdf</a></td><td style="white-space:nowrap"><button class="btn">Approve</button> <button class="btn rust">Reject</button></td></tr>
+            <tr><td><b>Adv. Ayesha Malik</b><div class="muted small">Islamabad</div></td><td>ISB-XXXX</td><td>Property</td><td><a>licence.pdf</a></td><td style="white-space:nowrap"><button class="btn">Approve</button> <button class="btn rust">Reject</button></td></tr>
+          </table>
+        </div>
+        <div class="card" style="flex:2">
+          <h2>Legal knowledge base</h2>
+          <div class="check"><span class="chip">Property</span>&nbsp; 14 sources · 1,820 sections</div>
+          <div class="check"><span class="chip">Family</span>&nbsp; 9 sources · 1,120 sections</div>
+          <div class="check" style="border:none"><span class="chip gold">Pending review</span>&nbsp; 2 new sources</div>
+          <button class="btn dark" style="margin-top:10px">+ Add verified source</button>
+          <div class="muted small" style="margin-top:8px">New sources are split into sections and indexed in Qdrant.</div>
+        </div>
+      </div>
+      <div class="muted small">All numbers are sample data.</div>
+    </div>
+  </div>
+</section>
+
+<script>
+const SIDES={
+  citizen:[["dashboard","My cases"],["newcase","New case"],["documents","Documents"],["directory","Find a lawyer"],["tracking","Case tracking"]],
+  lawyer:[["lawyer","Shared cases"],["lawyer","Active cases"],["lawyer","My profile"]],
+  admin:[["admin","Dashboard"],["admin","Verify lawyers"],["admin","Legal sources"],["admin","Users"]]
+};
+const ROLE={citizen:"Signed in as Citizen",lawyer:"Signed in as Lawyer",admin:"Signed in as Administrator"};
+document.querySelectorAll('aside.side').forEach(a=>{
+  const k=a.dataset.side,on=a.dataset.on;
+  a.innerHTML='<div class="brand"><div class="logo">&#9878;</div>Legal Advisor<br>and Analyzer</div>'+
+    SIDES[k].map(([id,t],i)=>`<a data-go="${id}" class="${id===on&&i===SIDES[k].findIndex(x=>x[0]===on)?'on':''}">${t}</a>`).join('')+
+    `<div class="role">${ROLE[k]}<br><a data-go="login" style="padding:6px 0;color:#cfe4df">Sign out</a></div>`;
+});
+const screens=[...document.querySelectorAll('.screen')];
+const nav=document.getElementById('protonav');
+screens.forEach(s=>{const a=document.createElement('a');a.textContent=s.dataset.title;a.href='#'+s.id;nav.appendChild(a);});
+function show(){
+  const id=(location.hash||'#login').slice(1);
+  screens.forEach(s=>s.classList.toggle('on',s.id===id));
+  nav.querySelectorAll('a').forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+id));
+  window.scrollTo(0,0);
+}
+document.addEventListener('click',e=>{const g=e.target.closest('[data-go]');if(g){e.preventDefault();location.hash=g.dataset.go;}});
+if(new URLSearchParams(location.search).has('shot'))document.body.classList.add('shot');
+window.addEventListener('hashchange',show);show();
+</script>
+</body>
+</html>

@@ -1,0 +1,189 @@
+@startuml erd
+!include common.iuml
+title Entity Relationship Diagram (logical) — MongoDB collections + Qdrant vectors
+hide methods
+skinparam linetype ortho
+
+entity "users" as users {
+  * user_id : ObjectId <<PK>>
+  --
+  name : string
+  email : string <<unique>>
+  phone : string
+  password_hash : string
+  role : enum(citizen, lawyer, admin)
+  cnic : string
+  city : string
+  is_active : bool
+  created_at : datetime
+}
+entity "lawyer_profiles" as lp {
+  * profile_id : ObjectId <<PK>>
+  --
+  * user_id : ObjectId <<FK>> <<unique>>
+  bar_licence_no : string <<unique>>
+  specializations : array
+  city : string
+  fee_min : int
+  fee_max : int
+  experience_years : int
+  languages : array
+  bio : string
+  verification_status : enum
+  verified_by : ObjectId <<FK>>
+  verified_at : datetime
+  rating_avg : float
+}
+entity "cases" as cases {
+  * case_id : ObjectId <<PK>>
+  --
+  * citizen_id : ObjectId <<FK>>
+  title : string
+  description : string
+  legal_area : enum(property, family)
+  topics : array
+  status : enum
+  created_at : datetime
+  updated_at : datetime
+}
+entity "follow_up_questions" as fq {
+  * question_id : ObjectId <<PK>>
+  --
+  * case_id : ObjectId <<FK>>
+  question_text : string
+  answer_text : string
+  asked_at : datetime
+  answered_at : datetime
+}
+entity "documents" as docs {
+  * document_id : ObjectId <<PK>>
+  --
+  * case_id : ObjectId <<FK>>
+  * uploaded_by : ObjectId <<FK>>
+  file_name : string
+  file_type : string
+  storage_path : string
+  extraction_method : enum(pymupdf, ocr)
+  extracted_text : string
+  uploaded_at : datetime
+}
+entity "clauses" as clauses {
+  * clause_id : ObjectId <<PK>>
+  --
+  * document_id : ObjectId <<FK>>
+  clause_type : string
+  text : string
+}
+entity "legal_guidance" as lg {
+  * guidance_id : ObjectId <<PK>>
+  --
+  * case_id : ObjectId <<FK>>
+  question : string
+  answer_text : string
+  model_name : string
+  citation_check_passed : bool
+  generated_at : datetime
+}
+entity "citations" as cit {
+  * citation_id : ObjectId <<PK>>
+  --
+  * guidance_id : ObjectId <<FK>>
+  * chunk_id : ObjectId <<FK>>
+  label : string
+  quoted_text : string
+  similarity_score : float
+}
+entity "legal_sources" as src {
+  * source_id : ObjectId <<PK>>
+  --
+  title : string
+  source_type : string
+  year : int
+  legal_area : enum
+  url : string
+  is_verified : bool
+  verified_by : ObjectId <<FK>>
+}
+entity "legal_chunks" as chunks {
+  * chunk_id : ObjectId <<PK>>
+  --
+  * source_id : ObjectId <<FK>>
+  section_no : string
+  heading : string
+  text : string
+  topic : string
+  vector_id : uuid <<Qdrant point>>
+}
+entity "qdrant: legal_vectors" as vec #F6EBD1 {
+  * point_id : uuid <<PK>>
+  --
+  vector : float[]
+  payload.chunk_id : ObjectId
+  payload.legal_area : string
+  payload.topic : string
+}
+entity "evidence_checklists" as ec {
+  * checklist_id : ObjectId <<PK>>
+  --
+  * case_id : ObjectId <<FK>> <<unique>>
+  created_at : datetime
+}
+entity "checklist_items" as ci {
+  * item_id : ObjectId <<PK>>
+  --
+  * checklist_id : ObjectId <<FK>>
+  document_id : ObjectId <<FK>>
+  description : string
+  is_required : bool
+  is_completed : bool
+}
+entity "case_shares" as cs {
+  * share_id : ObjectId <<PK>>
+  --
+  * case_id : ObjectId <<FK>>
+  * lawyer_profile_id : ObjectId <<FK>>
+  consent_given_at : datetime
+  status : enum
+}
+entity "status_updates" as su {
+  * update_id : ObjectId <<PK>>
+  --
+  * case_id : ObjectId <<FK>>
+  * updated_by : ObjectId <<FK>>
+  old_status : enum
+  new_status : enum
+  note : string
+  timestamp : datetime
+}
+entity "reviews" as rv {
+  * review_id : ObjectId <<PK>>
+  --
+  * citizen_id : ObjectId <<FK>>
+  * lawyer_profile_id : ObjectId <<FK>>
+  case_id : ObjectId <<FK>>
+  rating : int(1-5)
+  comment : string
+  created_at : datetime
+}
+
+users ||--o| lp : "has profile"
+users ||--o{ cases : "opens"
+cases ||--o{ fq : "has"
+cases ||--o{ docs : "has"
+users ||--o{ docs : "uploads"
+docs ||--o{ clauses : "contains"
+cases ||--o{ lg : "receives"
+lg ||--|{ cit : "has"
+chunks ||--o{ cit : "cited by"
+src ||--|{ chunks : "split into"
+chunks ||--|| vec : "embedded as"
+cases ||--o| ec : "has"
+ec ||--|{ ci : "lists"
+docs |o--o{ ci : "proves"
+cases ||--o{ cs : "shared via"
+lp ||--o{ cs : "receives"
+cases ||--o{ su : "history"
+users ||--o{ su : "posts"
+users ||--o{ rv : "writes"
+lp ||--o{ rv : "rated in"
+@enduml

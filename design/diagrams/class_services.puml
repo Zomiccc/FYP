@@ -1,0 +1,121 @@
+@startuml class_services
+!include common.iuml
+title Class Diagram (Part B) — Application Services and RAG Pipeline
+
+package "Presentation layer (React / Next.js)" {
+  class CitizenPortal
+  class LawyerPortal
+  class AdminPortal
+}
+
+package "Application layer (FastAPI)" {
+  class AuthService {
+    + register(data) : User
+    + login(email, password) : Token
+    + authorize(token, role : Role) : Boolean
+  }
+  class CaseService {
+    + createCase(citizenId, text) : Case
+    + getCase(caseId) : Case
+    + updateStatus(caseId, status, note) : void
+    + listCases(userId) : List<Case>
+  }
+  class FollowUpEngine {
+    + findMissingFacts(c : Case) : List<String>
+    + nextQuestion(c : Case) : FollowUpQuestion
+  }
+  class DocumentProcessor {
+    + upload(caseId, file) : Document
+    + extractText(d : Document) : String
+    + extractClauses(d : Document) : List<Clause>
+  }
+  class PdfExtractor <<PyMuPDF>> {
+    + extract(path) : String
+  }
+  class OcrService <<OCR>> {
+    + extract(imagePath) : String
+  }
+  class RAGService {
+    - topK : int
+    + answer(c : Case) : LegalGuidance
+    - buildPrompt(c : Case, chunks) : String
+  }
+  class EmbeddingService <<Sentence Transformers>> {
+    + embed(text : String) : float[]
+  }
+  class Retriever {
+    + search(queryVector, area : LegalArea, k : int) : List<LegalChunk>
+  }
+  class LLMClient <<open-source LLM>> {
+    + generate(prompt : String) : String
+  }
+  class CitationChecker {
+    + verify(answer : String, chunks) : Boolean
+    + extractCitations(answer, chunks) : List<Citation>
+  }
+  class ChecklistGenerator {
+    + generate(c : Case, chunks) : EvidenceChecklist
+  }
+  class LawyerDirectoryService {
+    + search(filter : LawyerFilter) : List<LawyerProfile>
+    + shareCase(caseId, lawyerId) : CaseShare
+  }
+  class AdminService {
+    + verifyLawyer(profileId, approve) : void
+    + addLegalSource(file) : LegalSource
+    + statistics() : Statistics
+  }
+  class KnowledgeBaseBuilder {
+    + ingest(source : LegalSource) : void
+    - chunkBySection(text) : List<LegalChunk>
+  }
+}
+
+package "Data layer" {
+  class MongoRepository <<MongoDB>> {
+    + save(entity) : void
+    + findById(id) : Object
+    + query(filter) : List
+  }
+  class QdrantStore <<Qdrant>> {
+    + upsert(chunkId, vector, payload) : void
+    + similaritySearch(vector, filter, k) : List
+  }
+  class FileStorage {
+    + put(file) : String
+    + get(path) : File
+  }
+}
+
+CitizenPortal ..> AuthService
+CitizenPortal ..> CaseService
+CitizenPortal ..> DocumentProcessor
+CitizenPortal ..> LawyerDirectoryService
+LawyerPortal ..> CaseService
+AdminPortal ..> AdminService
+
+CaseService --> FollowUpEngine
+CaseService --> RAGService
+CaseService --> MongoRepository
+RAGService --> EmbeddingService
+RAGService --> Retriever
+RAGService --> LLMClient
+RAGService --> CitationChecker
+RAGService --> ChecklistGenerator
+Retriever --> QdrantStore
+DocumentProcessor --> PdfExtractor
+DocumentProcessor --> OcrService
+DocumentProcessor --> FileStorage
+LawyerDirectoryService --> MongoRepository
+AdminService --> KnowledgeBaseBuilder
+KnowledgeBaseBuilder --> EmbeddingService
+KnowledgeBaseBuilder --> QdrantStore
+KnowledgeBaseBuilder --> PdfExtractor
+AuthService --> MongoRepository
+
+note right of LLMClient
+  The LLM never queries the
+  databases. RAGService passes
+  it only retrieved law sections.
+end note
+@enduml

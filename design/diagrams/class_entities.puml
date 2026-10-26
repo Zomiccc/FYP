@@ -1,0 +1,222 @@
+@startuml class_entities
+!include common.iuml
+title Class Diagram (Part A) — Domain / Entity Classes
+skinparam linetype ortho
+
+enum Role {
+  CITIZEN
+  LAWYER
+  ADMIN
+}
+enum CaseStatus {
+  DRAFT
+  CLARIFYING
+  GUIDANCE_READY
+  SHARED_WITH_LAWYER
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+enum LegalArea {
+  PROPERTY
+  FAMILY
+}
+enum VerificationStatus {
+  PENDING
+  VERIFIED
+  REJECTED
+}
+enum ShareStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  REVOKED
+}
+
+abstract class User {
+  # userId : String
+  # name : String
+  # email : String
+  # phone : String
+  # passwordHash : String
+  # role : Role
+  # city : String
+  # isActive : Boolean
+  # createdAt : DateTime
+  + login(email, password) : Session
+  + logout() : void
+  + updateProfile(data) : void
+}
+
+class Citizen {
+  - cnic : String
+  + createCase(title, description) : Case
+  + answerFollowUp(q : FollowUpQuestion, answer : String) : void
+  + uploadDocument(c : Case, file : File) : Document
+  + searchLawyers(filter : LawyerFilter) : List<LawyerProfile>
+  + shareCase(c : Case, lawyer : LawyerProfile) : CaseShare
+  + rateLawyer(lawyer : LawyerProfile, rating : int, comment : String) : Review
+}
+
+class Lawyer {
+  + viewSharedCases() : List<Case>
+  + respondToShare(s : CaseShare, accept : Boolean) : void
+  + postStatusUpdate(c : Case, status : CaseStatus, note : String) : void
+}
+
+class Administrator {
+  + verifyLawyer(p : LawyerProfile, approve : Boolean) : void
+  + verifyLegalSource(s : LegalSource) : void
+  + deactivateUser(u : User) : void
+  + viewDashboard() : Statistics
+}
+
+class LawyerProfile {
+  - profileId : String
+  - barLicenceNo : String
+  - specializations : List<LegalArea>
+  - city : String
+  - feeMin : int
+  - feeMax : int
+  - experienceYears : int
+  - languages : List<String>
+  - bio : String
+  - verificationStatus : VerificationStatus
+  - ratingAvg : float
+  + matches(filter : LawyerFilter) : Boolean
+  + recalculateRating() : void
+}
+
+class Case {
+  - caseId : String
+  - title : String
+  - description : String
+  - legalArea : LegalArea
+  - topics : List<String>
+  - status : CaseStatus
+  - createdAt : DateTime
+  - updatedAt : DateTime
+  + addFollowUp(q : FollowUpQuestion) : void
+  + missingFacts() : List<String>
+  + changeStatus(s : CaseStatus, by : User, note : String) : void
+  + latestGuidance() : LegalGuidance
+}
+
+class FollowUpQuestion {
+  - questionId : String
+  - questionText : String
+  - answerText : String
+  - askedAt : DateTime
+  - answeredAt : DateTime
+  + isAnswered() : Boolean
+}
+
+class Document {
+  - documentId : String
+  - fileName : String
+  - fileType : String
+  - storagePath : String
+  - extractionMethod : String
+  - extractedText : String
+  - uploadedAt : DateTime
+}
+
+class Clause {
+  - clauseId : String
+  - clauseType : String
+  - text : String
+}
+
+class LegalGuidance {
+  - guidanceId : String
+  - question : String
+  - answerText : String
+  - modelName : String
+  - citationCheckPassed : Boolean
+  - generatedAt : DateTime
+}
+
+class Citation {
+  - citationId : String
+  - label : String
+  - quotedText : String
+  - similarityScore : float
+}
+
+class LegalSource {
+  - sourceId : String
+  - title : String
+  - sourceType : String
+  - year : int
+  - legalArea : LegalArea
+  - url : String
+  - isVerified : Boolean
+}
+
+class LegalChunk {
+  - chunkId : String
+  - sectionNo : String
+  - heading : String
+  - text : String
+  - topic : String
+  - vectorId : String
+}
+
+class EvidenceChecklist {
+  - checklistId : String
+  - createdAt : DateTime
+  + progress() : float
+}
+
+class ChecklistItem {
+  - itemId : String
+  - description : String
+  - isRequired : Boolean
+  - isCompleted : Boolean
+}
+
+class CaseShare {
+  - shareId : String
+  - consentGivenAt : DateTime
+  - status : ShareStatus
+  + revoke() : void
+}
+
+class StatusUpdate {
+  - updateId : String
+  - oldStatus : CaseStatus
+  - newStatus : CaseStatus
+  - note : String
+  - timestamp : DateTime
+}
+
+class Review {
+  - reviewId : String
+  - rating : int
+  - comment : String
+  - createdAt : DateTime
+}
+
+User <|-- Citizen
+User <|-- Lawyer
+User <|-- Administrator
+Lawyer "1" *-- "1" LawyerProfile
+
+Citizen "1" --> "0..*" Case : opens
+Case "1" *-- "0..*" FollowUpQuestion
+Case "1" *-- "0..*" Document
+Document "1" *-- "0..*" Clause
+Case "1" *-- "0..*" LegalGuidance
+LegalGuidance "1" *-- "1..*" Citation
+Citation "0..*" --> "1" LegalChunk
+LegalSource "1" *-- "1..*" LegalChunk
+Case "1" *-- "0..1" EvidenceChecklist
+EvidenceChecklist "1" *-- "1..*" ChecklistItem
+ChecklistItem "0..*" --> "0..1" Document : proof
+Case "1" *-- "0..*" CaseShare
+CaseShare "0..*" --> "1" LawyerProfile
+Case "1" *-- "0..*" StatusUpdate
+StatusUpdate "0..*" --> "1" User : updatedBy
+Review "0..*" --> "1" LawyerProfile
+Citizen "1" --> "0..*" Review : writes
+@enduml

@@ -1,0 +1,100 @@
+@startuml domain_model
+!include common.iuml
+hide methods
+hide empty members
+left to right direction
+title Domain Model — AI Powered Legal Advisor and Analyzer
+
+class Citizen {
+  name
+  contact details
+  city
+}
+class Lawyer {
+  name
+  bar licence number
+  specialization
+  city
+  fee range
+  experience
+  languages
+  verification status
+}
+class Administrator {
+  name
+}
+class Case {
+  title
+  description
+  legal area
+  status
+}
+class "Follow-up Question" as FQ {
+  question
+  answer
+}
+class "Uploaded Document" as Doc {
+  file
+  extracted text
+}
+class Clause {
+  clause type
+  text
+}
+class "Legal Guidance" as Guidance {
+  plain-language answer
+  generated on
+}
+class Citation {
+  quoted text
+}
+class "Legal Source" as Source {
+  title
+  source type
+  year
+  legal area
+}
+class "Law Section (Chunk)" as Chunk {
+  section number
+  text
+  embedding
+}
+class "Evidence Checklist" as Checklist
+class "Checklist Item" as Item {
+  description
+  status
+}
+class "Case Share" as Share {
+  consent date
+  status
+}
+class "Status Update" as Update {
+  new status
+  note
+  date
+}
+class Review {
+  rating
+  comment
+}
+
+Citizen "1" -- "0..*" Case : opens >
+Case "1" *-- "0..*" FQ : clarified by >
+Case "1" *-- "0..*" Doc : has >
+Doc "1" *-- "0..*" Clause : contains >
+Case "1" *-- "0..*" Guidance : receives >
+Guidance "1" *-- "1..*" Citation : supported by >
+Citation "0..*" --> "1" Chunk : quotes >
+Source "1" *-- "1..*" Chunk : divided into >
+Case "1" *-- "0..1" Checklist : needs >
+Checklist "1" *-- "1..*" Item : lists >
+Item "0..*" --> "0..1" Doc : satisfied by >
+Citizen "1" -- "0..*" Share : gives consent >
+Share "0..*" -- "1" Case : for >
+Share "0..*" -- "1" Lawyer : with >
+Case "1" *-- "0..*" Update : history >
+Citizen "1" -- "0..*" Review : writes >
+Review "0..*" -- "1" Lawyer : about >
+Administrator "1" -- "0..*" Lawyer : verifies >
+Administrator "1" -- "0..*" Source : verifies >
+@enduml
