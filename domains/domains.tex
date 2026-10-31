@@ -1,0 +1,70 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage{mathptmx}
+\usepackage[a4paper,margin=2.2cm]{geometry}
+\usepackage[table]{xcolor}
+\usepackage{enumitem,titlesec,setspace}
+\definecolor{headteal}{HTML}{1B4A4A}
+\setstretch{1.08}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+\titleformat{\section}{\normalfont\large\bfseries\color{headteal}}{\thesection}{0.5em}{}
+\titleformat{\subsection}{\normalfont\normalsize\bfseries}{\thesubsection}{0.5em}{}
+\titlespacing*{\section}{0pt}{8pt}{3pt}
+\titlespacing*{\subsection}{0pt}{6pt}{2pt}
+\setlist{itemsep=1pt,topsep=2pt,leftmargin=1.4em}
+\pagestyle{plain}
+\begin{document}
+
+\begin{center}
+{\Large\bfseries\color{headteal} AI Powered Legal Advisor and Analyzer}\\[3pt]
+{\large\bfseries Project Domains: Definition and Scope}\\[2pt]
+{\small Muhammad Nabeel (BCS233115) \,\textperiodcentered\, Ashir Qureshi (BCS233084) \,\textperiodcentered\, Muhammad Sharjeel (BCS233113) \,\textperiodcentered\, Supervisor: Ms.\ Khadija Iftikhar}
+\end{center}
+
+\section{Overview}
+The \emph{AI Powered Legal Advisor and Analyzer} works in two legal domains of Pakistani law: \textbf{Property Disputes} and \textbf{Family Disputes}. A \emph{domain} here means a clearly bounded area of law for which the platform holds a verified knowledge base, asks domain-specific follow-up questions, generates cited guidance, prepares an evidence checklist and matches the citizen with lawyers who specialise in that area. These two domains were chosen because they affect a large number of ordinary citizens, they are usually heard in the district courts where most pending cases lie, and the people involved often face them without prior legal knowledge. Limiting the scope to two domains keeps the knowledge base small enough to verify carefully, which is essential for grounded and trustworthy answers.
+
+\section{Domain 1: Property Disputes}
+\textbf{Definition.} Property disputes are conflicts over the ownership, possession, use, transfer or inheritance of immovable property such as land, houses, flats and shops. They arise between owners, co-owners, heirs, buyers and sellers, and landlords and tenants.
+
+\subsection*{Sub-topics covered}
+\begin{itemize}
+  \item \textbf{Ownership and title:} disputes over who legally owns a property, defective or forged title documents, and registration of transfer.
+  \item \textbf{Illegal possession and encroachment:} occupation of land or a house without right, and construction on another person's land.
+  \item \textbf{Boundary disputes:} disagreements between neighbours over the limits of adjoining plots.
+  \item \textbf{Tenancy and eviction:} rent agreements, rent payment, notice and the lawful process for removing a tenant.
+  \item \textbf{Land sale issues:} sale agreements, earnest money, non-performance by buyer or seller, and transfer of possession.
+  \item \textbf{Agreements:} interpretation and enforcement of written property agreements.
+  \item \textbf{Inheritance of property:} division of a deceased person's property among legal heirs and denial of a heir's share.
+\end{itemize}
+\textbf{Typical user question.} ``My landlord has told me to leave the house within seven days. I have a written rent agreement. What are my rights?''
+
+\textbf{What the platform does in this domain.} It identifies the sub-topic, asks for the facts that matter (for example, whether a written agreement exists and how notice was given), retrieves the relevant verified law sections, explains them in plain language with citations, reads uploaded agreements, notices and receipts, and builds a checklist such as the agreement, rent receipts and identity documents.
+
+\section{Domain 2: Family Disputes}
+\textbf{Definition.} Family disputes are conflicts arising from marriage and its dissolution and the rights and duties that follow, between spouses and between parents in respect of their children. In Pakistan most such matters are heard by family courts.
+
+\subsection*{Sub-topics covered}
+\begin{itemize}
+  \item \textbf{Marriage (Nikah) registration:} registering a marriage and correcting or obtaining the nikah nama.
+  \item \textbf{Divorce and Khula:} dissolution of marriage initiated by the husband or by the wife, and the procedure involved.
+  \item \textbf{Dower (Haq Mehr):} recovery of prompt or deferred dower agreed in the nikah nama.
+  \item \textbf{Maintenance (Nafaqa):} financial support owed to a wife and children.
+  \item \textbf{Child custody and visitation:} who keeps the children after separation and the other parent's right to meet them.
+  \item \textbf{Family court procedures:} how to file a case, the documents required and the stages of proceedings.
+\end{itemize}
+\textbf{Typical user question.} ``My husband has stopped paying maintenance for me and our children. What can I do?''
+
+\textbf{What the platform does in this domain.} It confirms the relevant facts (for example, marriage registration, number and ages of children, and whether the parties live separately), explains the applicable law with citations, reads the nikah nama and other documents, lists the evidence to prepare, and suggests verified family-law lawyers in the user's city.
+
+\section{Legal Sources and Boundaries}
+Each domain has its own set of verified sources in the knowledge base, made up of the relevant Pakistani statutes, rules and selected case references. Candidate family-law sources include the Muslim Family Laws Ordinance, 1961, the West Pakistan Family Courts Act, 1964, the Dissolution of Muslim Marriages Act, 1939 and the Guardians and Wards Act, 1890. Candidate property-law sources include the Punjab Rented Premises Act, 2009 and the general property and transfer laws. The final list will be confirmed against the official text before indexing, and only sources verified by the administrator are used to answer questions.
+
+\textbf{Out of scope.} Criminal, tax, corporate, labour, banking and constitutional matters are not covered. When a question falls outside the two domains, or when no verified source applies, the platform says so clearly and directs the user to a verified lawyer instead of guessing.
+
+\textbf{Overlap between domains.} Some problems span both domains, for example a widow's share in her late husband's house. In such cases the system tags the case with both domains and retrieves sources from each.
+
+\textbf{Future domains.} The architecture allows new domains to be added later by ingesting new verified sources, but no other domain is part of this Final Year Project. The platform supports legal understanding and does not replace a qualified lawyer.
+
+\end{document}
