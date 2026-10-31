@@ -1,0 +1,32 @@
+%% name: e2e_swimlane
+flowchart TB
+    subgraph ADM["Admin"]
+        direction LR
+        A1["Add and verify legal sources"] ~~~ A2["Verify lawyer credentials"]
+    end
+    subgraph LAW["Lawyer"]
+        direction LR
+        L1(["Register and submit licence"]) --> L2["Build public profile"]
+        L3["Review request and shared case"] --> L4["Accept and schedule"] --> L5["Post updates and messages"] --> L6["Complete consultation"]
+    end
+    subgraph SYS["AI Services (System)"]
+        direction LR
+        S1["Classify area and topic"] --> S2["Find missing facts"]
+        S3["Retrieve law, generate answer, check citations"]
+        S4["Extract text and clauses, update checklist"]
+        S5["Notify participants"]
+    end
+    subgraph USR["User (Citizen)"]
+        direction LR
+        U1(["Register and log in"]) --> U2["Describe problem"] --> U3["Answer follow-up questions"] --> U4["Read guidance and sources"] --> U5["Upload documents"] --> U6["Search verified lawyers"] --> U7["Request consultation and consent"] --> U8["Track case timeline"] --> U9(["Mark resolved and review"])
+    end
+    U2 --> S1
+    S2 --> U3
+    U3 --> S3 --> U4
+    U5 --> S4
+    U7 --> S5 --> L3
+    L5 --> U8
+    L6 --> U9
+    L1 --> A2 --> L2
+    A1 -.->|"knowledge base ready"| S3
+    L2 -.->|"verified profile listed"| U6

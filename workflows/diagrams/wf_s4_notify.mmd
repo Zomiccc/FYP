@@ -1,0 +1,16 @@
+%% name: wf_s4_notify
+flowchart TD
+    S(["Event occurs"]) --> T{{"Event type"}}
+    T -->|Consultation requested| L1["Notify lawyer"]
+    T -->|Accepted, declined, rescheduled| U1["Notify user"]
+    T -->|Status update posted| U2["Notify user"]
+    T -->|Verification decision| L2["Notify lawyer"]
+    T -->|Account suspended or reactivated| A1["Notify account holder"]
+    L1 --> CH
+    U1 --> CH
+    U2 --> CH
+    L2 --> CH
+    A1 --> CH
+    CH["Create in-app notification"] --> EP{{"Email enabled for recipient?"}}
+    EP -->|Yes| EM["Send email"] --> E(["Done"])
+    EP -->|No| E

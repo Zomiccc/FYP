@@ -1,0 +1,49 @@
+%% name: actions_user
+flowchart TB
+    ROOT(["User (Citizen)"])
+    G1["<b>Account</b>"]
+    ROOT --> G1
+    G1A1["Register / verify email"]
+    G1 --> G1A1
+    G1A2["Log in / log out"]
+    G1A1 ~~~ G1A2
+    G1A3["Reset password"]
+    G1A2 ~~~ G1A3
+    G1A4["Manage profile / delete account"]
+    G1A3 ~~~ G1A4
+    G2["<b>Cases and AI assistance</b>"]
+    ROOT --> G2
+    G2A1["Create case"]
+    G2 --> G2A1
+    G2A2["Confirm area and topic"]
+    G2A1 ~~~ G2A2
+    G2A3["Answer follow-up questions"]
+    G2A2 ~~~ G2A3
+    G2A4["Request guidance / ask more"]
+    G2A3 ~~~ G2A4
+    G3["<b>Documents and evidence</b>"]
+    ROOT --> G3
+    G3A1["Upload PDF or image"]
+    G3 --> G3A1
+    G3A2["Review clauses"]
+    G3A1 ~~~ G3A2
+    G3A3["Complete checklist"]
+    G3A2 ~~~ G3A3
+    G4["<b>Lawyers and consultations</b>"]
+    ROOT --> G4
+    G4A1["Search and filter lawyers"]
+    G4 --> G4A1
+    G4A2["View public profile"]
+    G4A1 ~~~ G4A2
+    G4A3["Request consultation + consent"]
+    G4A2 ~~~ G4A3
+    G4A4["Message lawyer / revoke sharing"]
+    G4A3 ~~~ G4A4
+    G5["<b>Tracking and feedback</b>"]
+    ROOT --> G5
+    G5A1["View timeline and notifications"]
+    G5 --> G5A1
+    G5A2["Mark resolved or closed"]
+    G5A1 ~~~ G5A2
+    G5A3["Rate and review lawyer"]
+    G5A2 ~~~ G5A3

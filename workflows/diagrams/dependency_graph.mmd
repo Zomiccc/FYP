@@ -1,0 +1,37 @@
+%% name: dependency_graph
+%% landscape
+flowchart LR
+    subgraph ADMIN["Admin"]
+        AKB["A-WF2 Verify legal sources"]
+        AVL["A-WF1 Approve lawyer"]
+        AAC["A-WF3 Account status"]
+    end
+    subgraph SYSTEM["AI Services"]
+        SIN["S-WF3 Index sources in Qdrant"]
+        SRAG["S-WF1 RAG pipeline"]
+        SDOC["S-WF2 Document processing"]
+    end
+    subgraph USER["User"]
+        UACC["U-WF1 Active account"]
+        UCASE["U-WF2 Clarified case"]
+        UGUI["U-WF3 Guidance"]
+        UDOC["U-WF4 Evidence"]
+        UREQ["U-WF5 Consultation + consent"]
+        UTRK["U-WF6 Tracking and review"]
+    end
+    subgraph LAWYER["Lawyer"]
+        LREG["L-WF1 Registered, request submitted"]
+        LPRF["L-WF2 Published profile"]
+        LREQ["L-WF3 Accept request"]
+        LWRK["L-WF4 Updates and completion"]
+    end
+    AKB --> SIN --> SRAG --> UGUI
+    UACC --> UCASE --> UGUI
+    UCASE --> UDOC
+    SDOC --> UDOC
+    LREG --> AVL --> LPRF --> UREQ
+    UCASE --> UREQ
+    UREQ --> LREQ --> LWRK --> UTRK
+    AAC -.->|"suspension blocks"| UACC
+    AAC -.->|"suspension blocks"| LPRF
+    UREQ -.->|"revocation ends"| LWRK

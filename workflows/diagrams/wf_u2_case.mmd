@@ -1,0 +1,18 @@
+%% name: wf_u2_case
+flowchart TD
+    S(["Start: New case"]) --> D["Describe problem in own words"]
+    D --> CR["System creates case and chat session"]
+    CR --> CL["System classifies legal area and topic"]
+    CL --> SC{{"Within property or family law?"}}
+    SC -->|No| OUT["Explain scope and suggest lawyer search"] --> E0(["Go to U-WF5"])
+    SC -->|Yes| CF{{"User agrees with classification?"}}
+    CF -->|No| CH["User changes area or topic"] --> MF
+    CF -->|Yes| MF["System finds missing facts"]
+    MF --> ANY{{"Any fact missing?"}}
+    ANY -->|Yes| Q["System asks one follow-up question"]
+    Q --> A{{"User response"}}
+    A -->|Answer| ST["Store answer"] --> MF
+    A -->|Not sure| UN["Record fact as unknown"] --> MF
+    A -->|Upload document| UP["U-WF4 extracts facts"] --> MF
+    ANY -->|No| CLR["Case status: Clarified"]
+    CLR --> E(["Ready for guidance (U-WF3)"])

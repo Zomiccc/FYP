@@ -1,0 +1,15 @@
+%% name: wf_s1_rag
+flowchart TD
+    S(["Guidance requested"]) --> F["RAG Service: load case facts and history"]
+    F --> EMB["Sentence Transformers: embed query"]
+    EMB --> QD["Qdrant: top-k similarity search filtered by legal area"]
+    KB["Verified sources only (A-WF2)"] -.-> QD
+    QD --> TH{{"Any section above relevance threshold?"}}
+    TH -->|No| NS(["Return: no verified source, suggest lawyer"])
+    TH -->|Yes| PR["Build grounded prompt: rules + sections + facts"]
+    PR --> LLM["Open-source LLM: generate answer with source tags"]
+    LLM --> CC{{"Citation checker: every statement tagged and every tag retrieved?"}}
+    CC -->|Yes| SAVE["Save guidance, citations, checklist"] --> OUT(["Return answer with sources and disclaimer"])
+    CC -->|No| RG{{"Already regenerated once?"}}
+    RG -->|No| LLM
+    RG -->|Yes| WH(["Answer withheld, user informed"])

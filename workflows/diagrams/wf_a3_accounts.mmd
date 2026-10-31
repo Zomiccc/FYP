@@ -1,0 +1,10 @@
+%% name: wf_a3_accounts
+flowchart TD
+    S(["Start"]) --> SR["Search account by name, email or role"]
+    SR --> VW["Open account details"]
+    VW --> D{{"Action"}}
+    D -->|Suspend| SU["Suspend with reason"] --> SES["End active sessions"] --> LOG
+    D -->|Reactivate| RA["Reactivate account"] --> LOG
+    D -->|Remove| RM["Remove or anonymise account"] --> LOG
+    D -->|No action| E0(["End"])
+    LOG["Write audit log entry"] --> NT["Notify account holder"] --> E(["End"])

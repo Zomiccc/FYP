@@ -1,0 +1,14 @@
+%% name: wf_s3_ingest
+flowchart TD
+    S(["Source uploaded by Admin"]) --> EX["Extract text (PyMuPDF or OCR)"]
+    EX --> SEC{{"Section structure detected?"}}
+    SEC -->|Yes| CH["Split into section-wise chunks with metadata"]
+    SEC -->|No| FB["Fixed-length chunks with overlap, flag for review"]
+    CH --> LOOP["For each chunk"]
+    FB --> LOOP
+    LOOP --> EMB["Sentence Transformers: embed chunk"]
+    EMB --> UP["Qdrant: upsert vector with payload (chunk id, area, topic)"]
+    UP --> DB["MongoDB: store chunk record"]
+    DB --> MORE{{"More chunks?"}}
+    MORE -->|Yes| LOOP
+    MORE -->|No| AW(["Source status: Awaiting review (A-WF2)"])

@@ -1,0 +1,16 @@
+%% name: wf_l3_requests
+flowchart TD
+    S(["Start: New request notification"]) --> LST["Open request list"]
+    USR["User: consultation request + consent (U-WF5)"] -.-> LST
+    LST --> OPN["Open request"]
+    OPN --> CNS{{"Consent still active?"}}
+    CNS -->|No| CLS(["Request closed, case hidden"])
+    CNS -->|Yes| VIEW["Read case summary, guidance, documents, checklist"]
+    VIEW --> DEC{{"Decision"}}
+    DEC -->|Decline| DCL["Decline with optional reason"] --> N1["User notified, access ends"] --> E1(["End"])
+    DEC -->|Propose other time| PRP["Suggest new time"] --> UR{{"User accepts time?"}}
+    UR -->|No| CAN(["Consultation cancelled"])
+    UR -->|Yes| SCH
+    DEC -->|Accept| SCH["Status: Scheduled"]
+    SCH --> N2["User notified, contact details released"]
+    N2 --> E2(["Work on case (L-WF4)"])

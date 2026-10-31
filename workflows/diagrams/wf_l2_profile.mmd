@@ -1,0 +1,14 @@
+%% name: wf_l2_profile
+flowchart TD
+    S(["Start: Open My Profile"]) --> ED["Edit headline, about, practice areas, experience, education, languages, fees, photo"]
+    ED --> VAL{{"Input valid?"}}
+    VAL -->|No| ED
+    VAL -->|Yes| PRV["Preview public page"]
+    PRV --> BAR{{"Bar details changed?"}}
+    BAR -->|Yes| PEN["Status returns to Pending verification (A-WF1)"] --> E1(["Unlisted until re-approved"])
+    BAR -->|No| PUB{{"Lawyer verified?"}}
+    PUB -->|No| SAVE["Saved, not yet public"] --> E2(["Await verification"])
+    PUB -->|Yes| LIVE["Changes published in directory"]
+    LIVE --> AVL{{"Accepting new requests?"}}
+    AVL -->|Yes| ON["Availability: open"] --> E3(["Visible to users (U-WF5)"])
+    AVL -->|No| OFF["Availability: paused"] --> E4(["Listed but new requests blocked"])

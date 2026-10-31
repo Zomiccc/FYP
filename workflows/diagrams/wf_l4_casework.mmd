@@ -1,0 +1,10 @@
+%% name: wf_l4_casework
+flowchart TD
+    S(["Start: Consultation Scheduled"]) --> CS{{"Consent still active?"}}
+    CS -->|No| STOP(["Access ended by user revocation"])
+    CS -->|Yes| ACT{{"Choose action"}}
+    ACT -->|Message| MSG["Send message to user"] --> CS
+    ACT -->|Update| UPD["Post status update and note"] --> TL["Added to user timeline, user notified"] --> CS
+    ACT -->|Consultation held| CMP["Mark consultation Completed"]
+    CMP --> RV["User invited to review (U-WF6)"]
+    RV --> E(["End"])

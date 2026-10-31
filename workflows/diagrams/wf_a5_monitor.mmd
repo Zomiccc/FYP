@@ -1,0 +1,9 @@
+%% name: wf_a5_monitor
+flowchart TD
+    S(["Start"]) --> DB["Open admin dashboard"]
+    DB --> ST["View users, verified lawyers, open cases, consultations, indexed sections, guidance requests"]
+    ST --> WR{{"Withheld-answer rate high?"}}
+    WR -->|Yes| GAP["Identify missing topics"] --> KB(["Add sources (A-WF2)"])
+    WR -->|No| AUD{{"Audit review needed?"}}
+    AUD -->|Yes| FL["Filter audit log by date, admin, action"] --> RPT["Review actions"] --> E1(["End"])
+    AUD -->|No| E2(["End"])

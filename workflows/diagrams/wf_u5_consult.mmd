@@ -1,0 +1,19 @@
+%% name: wf_u5_consult
+flowchart TD
+    S(["Start"]) --> DIR["Open lawyer directory"]
+    VER["Admin: lawyers verified (A-WF1)"] -.-> DIR
+    DIR --> FIL["Apply filters: area, city, fee, experience, language, rating"]
+    FIL --> RES{{"Matches found?"}}
+    RES -->|No| WID["Widen filters"] --> FIL
+    RES -->|Yes| PRO["Open public profile"]
+    PRO --> FIT{{"Suitable lawyer?"}}
+    FIT -->|No| FIL
+    FIT -->|Yes| AV{{"Lawyer accepting requests?"}}
+    AV -->|No| FIL
+    AV -->|Yes| REQ["Choose case, mode, time and message"]
+    REQ --> CON["Review items to be shared"]
+    CON --> AG{{"Give consent?"}}
+    AG -->|No| C0(["No consultation created"])
+    AG -->|Yes| CR["Consultation Requested, consent recorded"]
+    CR --> NT["Lawyer notified (S-WF4)"]
+    NT --> E(["Await lawyer response (L-WF3)"])

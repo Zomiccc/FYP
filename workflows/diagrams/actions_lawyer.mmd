@@ -1,0 +1,39 @@
+%% name: actions_lawyer
+flowchart TB
+    ROOT(["Lawyer"])
+    G1["<b>Account and verification</b>"]
+    ROOT --> G1
+    G1A1["Register with bar details"]
+    G1 --> G1A1
+    G1A2["Log in / log out"]
+    G1A1 ~~~ G1A2
+    G1A3["Submit or re-submit verification"]
+    G1A2 ~~~ G1A3
+    G2["<b>Public profile</b>"]
+    ROOT --> G2
+    G2A1["Edit headline, about, practice areas"]
+    G2 --> G2A1
+    G2A2["Add experience and education"]
+    G2A1 ~~~ G2A2
+    G2A3["Set fees, languages, availability"]
+    G2A2 ~~~ G2A3
+    G3["<b>Consultation requests</b>"]
+    ROOT --> G3
+    G3A1["View requests and shared summary"]
+    G3 --> G3A1
+    G3A2["Accept / decline / propose time"]
+    G3A1 ~~~ G3A2
+    G4["<b>Shared case work</b>"]
+    ROOT --> G4
+    G4A1["Read consented case items"]
+    G4 --> G4A1
+    G4A2["Message user"]
+    G4A1 ~~~ G4A2
+    G4A3["Post status updates"]
+    G4A2 ~~~ G4A3
+    G4A4["Mark consultation completed"]
+    G4A3 ~~~ G4A4
+    G5["<b>Dashboard</b>"]
+    ROOT --> G5
+    G5A1["View requests, active cases, rating"]
+    G5 --> G5A1

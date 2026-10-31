@@ -1,0 +1,15 @@
+%% name: wf_a4_moderation
+flowchart TD
+    S(["Start"]) --> RQ["Open reports queue"]
+    USR["User reports profile item or review"] -.-> RQ
+    RQ --> IT["Select reported item"]
+    IT --> CHK{{"Violates platform rules?"}}
+    CHK -->|No| KEEP["Keep content, close report"]
+    CHK -->|Yes| REM["Remove content"]
+    REM --> SEV{{"Repeated or serious?"}}
+    SEV -->|Yes| SUS["Suspend account (A-WF3)"]
+    SEV -->|No| WARN["Notify content owner"]
+    KEEP --> LOG["Write audit log entry"]
+    SUS --> LOG
+    WARN --> LOG
+    LOG --> E(["End"])

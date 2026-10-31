@@ -1,0 +1,12 @@
+%% name: wf_u6_track
+flowchart TD
+    S(["Start: Open case"]) --> TL["View status, timeline, checklist and consultations"]
+    TL --> EV{{"Event or user choice"}}
+    EV -->|Lawyer update received| UPD["Read update (from L-WF4)"] --> TL
+    EV -->|Consultation accepted| MSG["Message lawyer"] --> TL
+    EV -->|Stop sharing| REV["Revoke consent"] --> RV2["Lawyer access ends, timeline records revocation"] --> TL
+    EV -->|Consultation completed| RW{{"Leave a review?"}}
+    RW -->|Yes| RATE["Rate 1-5 and comment"] --> TL
+    RW -->|No| TL
+    EV -->|Matter settled| RES["Mark case Resolved"] --> E1(["End"])
+    EV -->|Abandon| CLS["Close case"] --> E2(["End"])

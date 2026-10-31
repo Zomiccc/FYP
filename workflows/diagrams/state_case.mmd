@@ -1,0 +1,20 @@
+%% name: state_case
+stateDiagram-v2
+    [*] --> Open : User creates case
+    Open --> Clarifying : Missing facts found
+    Clarifying --> Clarifying : Follow-up answered
+    Clarifying --> Clarified : All required facts known
+    Open --> Clarified : No facts missing
+    Clarified --> GuidanceReady : Cited answer generated
+    Clarified --> Clarified : No verified source
+    GuidanceReady --> SharedWithLawyer : Consultation requested with consent
+    SharedWithLawyer --> InProgress : Lawyer accepts
+    SharedWithLawyer --> GuidanceReady : Declined or consent revoked
+    InProgress --> GuidanceReady : Consent revoked
+    InProgress --> Resolved : User marks resolved
+    GuidanceReady --> Resolved : User marks resolved
+    Open --> Closed : User closes
+    Clarifying --> Closed : User closes
+    GuidanceReady --> Closed : User closes
+    Resolved --> [*]
+    Closed --> [*]

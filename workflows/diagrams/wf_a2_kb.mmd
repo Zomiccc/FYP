@@ -1,0 +1,12 @@
+%% name: wf_a2_kb
+flowchart TD
+    S(["Start"]) --> ACT{{"Task"}}
+    ACT -->|Add source| UP["Upload official text and metadata: title, type, year, area, URL"]
+    UP --> ING["System ingestion (S-WF3)"]
+    ING --> RVW["Review sample of section chunks"]
+    RVW --> OK{{"Chunks correct?"}}
+    OK -->|No| FIX["Flag for manual correction and re-ingest"] --> ING
+    OK -->|Yes| VER["Mark source Verified"]
+    VER --> LIVE(["Retrievable by RAG pipeline (S-WF1)"])
+    ACT -->|Source amended| NEW["Upload new text"] --> REIDX["Re-index and retire old chunks"] --> RVW
+    ACT -->|Source repealed| RET["Retire source"] --> EX(["Excluded from retrieval, kept for past citations"])

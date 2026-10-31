@@ -1,0 +1,15 @@
+%% name: state_consult
+stateDiagram-v2
+    [*] --> Requested : User requests with consent
+    Requested --> Scheduled : Lawyer accepts
+    Requested --> Declined : Lawyer declines
+    Requested --> Rescheduling : Lawyer proposes another time
+    Rescheduling --> Scheduled : User accepts time
+    Rescheduling --> Cancelled : User rejects time
+    Requested --> Closed : Consent revoked
+    Scheduled --> Closed : Consent revoked
+    Scheduled --> Completed : Lawyer marks completed
+    Completed --> [*] : User may review
+    Declined --> [*]
+    Cancelled --> [*]
+    Closed --> [*]

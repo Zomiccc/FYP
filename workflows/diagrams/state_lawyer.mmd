@@ -1,0 +1,11 @@
+%% name: state_lawyer
+stateDiagram-v2
+    [*] --> Unverified : Registers
+    Unverified --> Pending : Email verified, request submitted
+    Pending --> Verified : Admin approves
+    Pending --> Rejected : Admin rejects
+    Pending --> Pending : Admin requests information
+    Rejected --> Pending : Lawyer re-submits
+    Verified --> Pending : Bar details edited
+    Verified --> Suspended : Admin suspends
+    Suspended --> Verified : Admin reactivates

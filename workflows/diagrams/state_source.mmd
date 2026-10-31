@@ -1,0 +1,9 @@
+%% name: state_source
+stateDiagram-v2
+    [*] --> Processing : Admin uploads source
+    Processing --> AwaitingReview : Chunks indexed
+    AwaitingReview --> Processing : Chunks need correction
+    AwaitingReview --> Verified : Admin verifies
+    Verified --> Processing : Amended text re-indexed
+    Verified --> Retired : Source repealed
+    Retired --> [*]

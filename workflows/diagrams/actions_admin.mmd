@@ -1,0 +1,35 @@
+%% name: actions_admin
+flowchart TB
+    ROOT(["Admin"])
+    G1["<b>Lawyer verification</b>"]
+    ROOT --> G1
+    G1A1["Review queue and licence"]
+    G1 --> G1A1
+    G1A2["Approve / reject / request info"]
+    G1A1 ~~~ G1A2
+    G2["<b>Legal knowledge base</b>"]
+    ROOT --> G2
+    G2A1["Add source with metadata"]
+    G2 --> G2A1
+    G2A2["Review chunks and verify"]
+    G2A1 ~~~ G2A2
+    G2A3["Re-index or retire source"]
+    G2A2 ~~~ G2A3
+    G3["<b>Account management</b>"]
+    ROOT --> G3
+    G3A1["Search and view accounts"]
+    G3 --> G3A1
+    G3A2["Suspend / reactivate / remove"]
+    G3A1 ~~~ G3A2
+    G4["<b>Moderation</b>"]
+    ROOT --> G4
+    G4A1["Review reported content"]
+    G4 --> G4A1
+    G4A2["Keep or remove content"]
+    G4A1 ~~~ G4A2
+    G5["<b>Monitoring</b>"]
+    ROOT --> G5
+    G5A1["Platform statistics"]
+    G5 --> G5A1
+    G5A2["Audit log"]
+    G5A1 ~~~ G5A2

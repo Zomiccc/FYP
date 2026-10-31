@@ -1,0 +1,17 @@
+%% name: wf_a1_verify
+flowchart TD
+    S(["Start"]) --> Q["Open verification queue"]
+    LW["Lawyer: verification request (L-WF1)"] -.-> Q
+    Q --> SEL["Select pending request"]
+    SEL --> DOC["View details and licence document"]
+    DOC --> EXT["Check against bar council records (outside system)"]
+    EXT --> M{{"Details match?"}}
+    M -->|Yes| AP["Approve: status Verified, profile listed"]
+    M -->|Unclear| INF["Request more information"] --> W(["Request stays pending"])
+    M -->|No| RJ["Reject with reason"]
+    AP --> LOG["Write audit log entry"]
+    RJ --> LOG
+    LOG --> NT["Notify lawyer (S-WF4)"]
+    NT --> MORE{{"More requests?"}}
+    MORE -->|Yes| SEL
+    MORE -->|No| E(["End"])

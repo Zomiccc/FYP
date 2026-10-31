@@ -1,0 +1,24 @@
+%% name: wf_u1_account
+flowchart TD
+    S(["Start"]) --> H{{"Has an account?"}}
+    H -->|No| R["Fill registration form"]
+    R --> V1{{"Email unused and input valid?"}}
+    V1 -->|No| R
+    V1 -->|Yes| E["Receive verification email"]
+    E --> C{{"Link valid?"}}
+    C -->|No| E2["Request new link"] --> E
+    C -->|Yes| ACT["Account activated"]
+    ACT --> LG
+    H -->|Yes| LG["Enter email and password"]
+    LG --> OK{{"Credentials valid?"}}
+    OK -->|No| F{{"Forgot password?"}}
+    F -->|Yes| RP["Reset via emailed link"] --> LG
+    F -->|No| LG
+    OK -->|Yes| SUS{{"Account suspended?"}}
+    SUS -->|Yes| X(["Access refused"])
+    SUS -->|No| D["User dashboard"]
+    D --> P{{"Choose action"}}
+    P -->|Edit profile| EP["Update details / password"] --> D
+    P -->|Delete account| DEL["Confirm deletion"] --> END1(["Data removed or anonymised"])
+    P -->|Continue| END2(["Go to cases (U-WF2)"])
+    ADM["Admin: A-WF3 suspension"] -.-> SUS

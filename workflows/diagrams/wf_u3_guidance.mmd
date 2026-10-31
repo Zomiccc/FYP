@@ -1,0 +1,17 @@
+%% name: wf_u3_guidance
+flowchart TD
+    S(["Start: Case is Clarified"]) --> RQ["Request guidance"]
+    RQ --> P["System runs RAG pipeline (S-WF1)"]
+    KB["Admin: verified knowledge base (A-WF2)"] -.-> P
+    P --> R{{"Result"}}
+    R -->|Cited answer| SH["Read plain-language answer, sources and disclaimer"]
+    R -->|No verified source| NS["Message: no verified source, consult a lawyer"]
+    R -->|Service error| ERR["Error shown, case kept"] --> RT{{"Retry later?"}}
+    RT -->|Yes| RQ
+    RT -->|No| E3(["End"])
+    SH --> CK["View evidence checklist"]
+    CK --> NX{{"Next step"}}
+    NX -->|Ask more| FQ["Ask follow-up question in same session"] --> P
+    NX -->|Add evidence| E1(["Go to U-WF4"])
+    NX -->|Find lawyer| E2(["Go to U-WF5"])
+    NS --> E2

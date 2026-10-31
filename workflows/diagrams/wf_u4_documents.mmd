@@ -1,0 +1,16 @@
+%% name: wf_u4_documents
+flowchart TD
+    S(["Start: Case exists"]) --> SEL["Select case and file"]
+    SEL --> VAL{{"Type PDF/JPG/PNG and size within limit?"}}
+    VAL -->|No| REJ["Upload rejected with reason"] --> SEL
+    VAL -->|Yes| UPL["File uploaded"]
+    UPL --> PROC["System processes document (S-WF2)"]
+    PROC --> Q{{"Text readable?"}}
+    Q -->|No| LOWQ["Asked for clearer image, file marked low quality"] --> SEL
+    Q -->|Yes| CLS["Review extracted key clauses"]
+    CLS --> LBL{{"Clauses recognised?"}}
+    LBL -->|No| MAN["Label document type manually"] --> CHK
+    LBL -->|Yes| CHK["Checklist items updated"]
+    CHK --> DONE{{"All required items available?"}}
+    DONE -->|No| MORE["Upload next document"] --> SEL
+    DONE -->|Yes| E(["Evidence complete"])

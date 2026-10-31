@@ -1,0 +1,15 @@
+%% name: wf_l1_verify
+flowchart TD
+    S(["Start"]) --> REG["Register: personal details, bar enrolment no., bar council"]
+    REG --> LIC["Upload licence copy"]
+    LIC --> EM["Verify email"]
+    EM --> PEND["Status: Pending verification"]
+    PEND --> SUB["Verification request sent to Admin queue"]
+    SUB -.->|"handled in A-WF1"| DEC{{"Admin decision"}}
+    DEC -->|Approved| VER["Status: Verified, profile listed with badge"]
+    DEC -->|More info needed| INF["Provide clarification"] --> SUB
+    DEC -->|Rejected| REJ["Read rejection reason"]
+    REJ --> FIX{{"Correct and re-submit?"}}
+    FIX -->|Yes| CORR["Update details or licence"] --> SUB
+    FIX -->|No| E0(["Remains unlisted"])
+    VER --> E(["Can receive consultation requests"])

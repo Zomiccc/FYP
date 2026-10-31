@@ -1,0 +1,14 @@
+%% name: wf_s2_docs
+flowchart TD
+    S(["File uploaded"]) --> V{{"Valid type and size?"}}
+    V -->|No| R(["Reject upload"])
+    V -->|Yes| ST["Store file, status Processing"]
+    ST --> TL{{"PDF with text layer?"}}
+    TL -->|Yes| PY["PyMuPDF: extract text"]
+    TL -->|No| OCR["OCR engine: recognise text"]
+    PY --> QL{{"Text quality acceptable?"}}
+    OCR --> QL
+    QL -->|No| LQ(["Mark Low quality, ask for clearer image"])
+    QL -->|Yes| CL["LLM: extract key clauses as structured fields"]
+    CL --> LK["Link document to case, match checklist items"]
+    LK --> NT(["Notify user: processing complete"])
