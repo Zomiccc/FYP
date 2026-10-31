@@ -1,0 +1,15 @@
+flowchart TD
+    L["Login / Register"] --> UD["User Dashboard"]
+    L --> LD["Lawyer Dashboard"]
+    L --> AD["Admin Dashboard"]
+    UD --> NC["New Case"] --> FQ["Follow-up Questions"] --> GD["AI Guidance + Sources"]
+    GD --> DC["Documents + Checklist"]
+    GD --> DIR["Lawyer Directory"] --> PP["Public Lawyer Profile"] --> CR["Consultation Request + Consent"]
+    UD --> TR["Case Tracking Timeline"]
+    CR --> TR
+    LD --> REQ["Consultation Requests"] --> SC["Shared Case View"] --> UPD["Post Update / Message"]
+    LD --> PE["Profile Editor + Verification"]
+    AD --> VQ["Lawyer Verification Queue"]
+    AD --> UM["User and Lawyer Management"]
+    AD --> KB["Legal Knowledge Base"]
+    AD --> AL["Audit Log and Reports"]

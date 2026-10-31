@@ -1,0 +1,200 @@
+classDiagram
+    direction LR
+    class Account {
+        <<abstract>>
+        +accountId
+        +fullName
+        +email
+        +phone
+        +passwordHash
+        +role
+        +status
+        +createdAt
+    }
+    class User {
+        +city
+        +preferredLanguage
+    }
+    class Lawyer {
+        +headline
+        +about
+        +practiceAreas
+        +barEnrolmentNo
+        +barCouncil
+        +city
+        +officeAddress
+        +languages
+        +feeMin
+        +feeMax
+        +experienceYears
+        +verificationStatus
+        +ratingAverage
+        +acceptingRequests
+    }
+    class Admin {
+        +adminLevel
+    }
+    class Experience {
+        +title
+        +organisation
+        +startDate
+        +endDate
+        +description
+    }
+    class Qualification {
+        +degree
+        +institution
+        +year
+    }
+    class VerificationRequest {
+        +licenceDocument
+        +submittedAt
+        +decision
+        +reason
+        +decidedAt
+    }
+    class Case {
+        +caseId
+        +title
+        +legalArea
+        +topic
+        +description
+        +status
+        +createdAt
+        +updatedAt
+    }
+    class FollowUpQuestion {
+        +requiredFact
+        +question
+        +answer
+        +answeredAt
+    }
+    class ChatSession {
+        +sessionId
+        +startedAt
+    }
+    class ChatMessage {
+        +sender
+        +text
+        +sentAt
+    }
+    class LegalGuidance {
+        +answerText
+        +modelName
+        +citationCheckPassed
+        +generatedAt
+    }
+    class Citation {
+        +label
+        +quotedText
+        +similarityScore
+    }
+    class LegalSource {
+        +title
+        +sourceType
+        +year
+        +legalArea
+        +officialUrl
+        +status
+    }
+    class LegalSection {
+        +sectionRef
+        +heading
+        +text
+        +topic
+        +vectorId
+    }
+    class LegalDocument {
+        +fileName
+        +fileType
+        +storagePath
+        +extractionMethod
+        +extractedText
+        +uploadedAt
+    }
+    class Clause {
+        +clauseType
+        +value
+    }
+    class EvidenceChecklist {
+        +createdAt
+    }
+    class ChecklistItem {
+        +description
+        +required
+        +available
+    }
+    class Consultation {
+        +mode
+        +requestedTime
+        +scheduledTime
+        +status
+        +message
+    }
+    class ConsentRecord {
+        +sharedItems
+        +grantedAt
+        +revokedAt
+    }
+    class ConsultationMessage {
+        +senderRole
+        +text
+        +sentAt
+    }
+    class CaseStatusUpdate {
+        +status
+        +note
+        +postedBy
+        +postedAt
+    }
+    class Review {
+        +rating
+        +comment
+        +createdAt
+    }
+    class Notification {
+        +type
+        +text
+        +read
+        +createdAt
+    }
+    class AuditLog {
+        +action
+        +targetType
+        +targetId
+        +reason
+        +timestamp
+    }
+
+    Account <|-- User
+    Account <|-- Lawyer
+    Account <|-- Admin
+    Lawyer "1" *-- "0..*" Experience : lists
+    Lawyer "1" *-- "0..*" Qualification : holds
+    Lawyer "1" -- "1..*" VerificationRequest : submits
+    Admin "1" -- "0..*" VerificationRequest : decides
+    User "1" -- "0..*" Case : opens
+    Case "1" *-- "0..*" FollowUpQuestion : clarified by
+    Case "1" *-- "1..*" ChatSession : discussed in
+    ChatSession "1" *-- "1..*" ChatMessage : contains
+    ChatMessage "1" -- "0..1" LegalGuidance : delivers
+    LegalGuidance "1" *-- "1..*" Citation : supported by
+    Citation "0..*" --> "1" LegalSection : quotes
+    LegalSource "1" *-- "1..*" LegalSection : divided into
+    Admin "1" -- "0..*" LegalSource : verifies
+    Case "1" *-- "0..*" LegalDocument : has
+    LegalDocument "1" *-- "0..*" Clause : contains
+    Case "1" *-- "0..1" EvidenceChecklist : needs
+    EvidenceChecklist "1" *-- "1..*" ChecklistItem : lists
+    ChecklistItem "0..*" --> "0..1" LegalDocument : satisfied by
+    Case "1" -- "0..*" Consultation : discussed in
+    User "1" -- "0..*" Consultation : requests
+    Lawyer "1" -- "0..*" Consultation : handles
+    Consultation "1" *-- "1" ConsentRecord : governed by
+    Consultation "1" *-- "0..*" ConsultationMessage : contains
+    Case "1" *-- "0..*" CaseStatusUpdate : history
+    Consultation "1" -- "0..1" Review : rated by
+    User "1" -- "0..*" Review : writes
+    Lawyer "1" -- "0..*" Review : receives
+    Account "1" -- "0..*" Notification : receives
+    Admin "1" -- "0..*" AuditLog : recorded in

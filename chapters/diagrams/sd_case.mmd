@@ -1,0 +1,27 @@
+sequenceDiagram
+    autonumber
+    actor U as User
+    participant FE as Next.js Frontend
+    participant CS as FastAPI (Case Service)
+    participant FU as Follow-up Engine
+    participant LLM as Open-source LLM
+    participant DB as MongoDB
+    U->>FE: Describe problem
+    FE->>CS: POST /cases (description)
+    CS->>DB: Insert case + chat session
+    CS->>FU: Classify and find missing facts
+    FU->>LLM: Classify area/topic (structured output)
+    LLM-->>FU: Area = property, topic = tenancy
+    FU->>FU: Compare facts with topic checklist
+    FU-->>CS: Missing facts list
+    CS-->>FE: Case created + first follow-up question
+    loop until no required fact is missing
+        FE-->>U: Show question
+        U->>FE: Answer
+        FE->>CS: POST /cases/{id}/answers
+        CS->>DB: Store question and answer
+        CS->>FU: Next missing fact?
+        FU-->>CS: Next question or none
+    end
+    CS->>DB: Update case status = Clarified
+    CS-->>FE: Ready for guidance

@@ -1,0 +1,20 @@
+flowchart LR
+    Admin["Admin"]
+    AI["AI Services"]
+    subgraph SYS["AI Legal Advisor and Analyzer: Admin Portal"]
+        UC1(["UC-01 Authenticate"])
+        UC10(["UC-10 Verify Lawyer Accounts"])
+        UC11(["UC-11 Manage Legal Knowledge Base"])
+        UC12(["UC-12 Manage Users and Monitor Activity"])
+        UC11b(["Index Source into Qdrant"])
+        UC12b(["Moderate Profiles and Reviews"])
+        UC12c(["View Audit Log"])
+    end
+    Admin --- UC1
+    Admin --- UC10
+    Admin --- UC11
+    Admin --- UC12
+    UC11 -. "include" .-> UC11b
+    UC12b -. "extend" .-> UC12
+    UC12c -. "extend" .-> UC12
+    UC11b --- AI

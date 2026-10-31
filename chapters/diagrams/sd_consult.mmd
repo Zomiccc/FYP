@@ -1,0 +1,24 @@
+sequenceDiagram
+    autonumber
+    actor U as User
+    participant FE as Next.js Frontend
+    participant LD as FastAPI (Lawyer Directory)
+    participant CN as FastAPI (Consultation Service)
+    participant DB as MongoDB
+    actor L as Lawyer
+    U->>FE: Search with filters
+    FE->>LD: GET /lawyers?area=&city=&fee=&lang=&rating=
+    LD->>DB: Query verified lawyers
+    DB-->>LD: Matching profiles
+    LD-->>FE: Results
+    U->>FE: Open public profile
+    FE->>LD: GET /lawyers/{id}
+    LD-->>FE: Profile, experience, education, reviews
+    U->>FE: Request consultation (case, mode, time, message)
+    FE-->>U: Consent screen (items to share)
+    U->>FE: Confirm consent
+    FE->>CN: POST /consultations
+    CN->>DB: Insert consultation (Requested) + consent record
+    CN->>DB: Add timeline event to case
+    CN-->>FE: Request sent
+    CN--)L: Notification: new consultation request

@@ -1,0 +1,24 @@
+sequenceDiagram
+    autonumber
+    actor L as Lawyer
+    participant FE as Next.js (Lawyer Portal)
+    participant CN as FastAPI (Consultation Service)
+    participant CS as FastAPI (Case Service)
+    participant DB as MongoDB
+    actor U as User
+    L->>FE: Open request
+    FE->>CN: GET /consultations/{id}
+    CN->>DB: Check consent active
+    DB-->>CN: Consent + shared items
+    CN-->>FE: Case summary, guidance, documents
+    L->>FE: Accept and confirm time
+    FE->>CN: PATCH /consultations/{id} (Scheduled)
+    CN->>DB: Update status
+    CN--)U: Notification: consultation scheduled
+    L->>FE: Post status update and note
+    FE->>CS: POST /cases/{id}/updates
+    CS->>DB: Insert status update (timeline)
+    CS--)U: Notification: case updated
+    L->>FE: Mark consultation completed
+    FE->>CN: PATCH /consultations/{id} (Completed)
+    CN--)U: Invitation to review lawyer

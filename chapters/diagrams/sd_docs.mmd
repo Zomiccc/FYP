@@ -1,0 +1,28 @@
+sequenceDiagram
+    autonumber
+    actor U as User
+    participant FE as Next.js Frontend
+    participant DP as FastAPI (Document Processor)
+    participant FS as File Store
+    participant PDF as PyMuPDF
+    participant OCR as OCR Engine
+    participant LLM as Open-source LLM
+    participant DB as MongoDB
+    U->>FE: Upload file to case
+    FE->>DP: POST /cases/{id}/documents
+    DP->>DP: Validate type and size
+    DP->>FS: Save file
+    DP->>DB: Insert document (status = processing)
+    DP-->>FE: 202 Accepted
+    alt PDF with text layer
+        DP->>PDF: Extract text
+        PDF-->>DP: Text
+    else scan or image
+        DP->>OCR: Recognise text
+        OCR-->>DP: Text
+    end
+    DP->>LLM: Extract key clauses (structured fields)
+    LLM-->>DP: Clauses (parties, rent, term, notice...)
+    DP->>DB: Save text and clauses, update checklist items
+    DP-->>FE: Notify processing complete
+    FE-->>U: Show clauses and updated checklist

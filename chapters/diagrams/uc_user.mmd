@@ -1,0 +1,28 @@
+flowchart LR
+    User["User (Citizen)"]
+    AI["AI Services"]
+    subgraph SYS["AI Legal Advisor and Analyzer: User Portal"]
+        UC1(["UC-01 Register and Authenticate"])
+        UC2(["UC-02 Create Case and Clarify Facts"])
+        UC3(["UC-03 Obtain AI Legal Guidance"])
+        UC4(["UC-04 Upload and Analyse Documents"])
+        UC5(["UC-05 Search Lawyers and View Profile"])
+        UC6(["UC-06 Request Consultation and Share Case"])
+        UC7(["UC-07 Track Case Progress"])
+        UCv(["Verify Citations"])
+        UCck(["Generate Evidence Checklist"])
+        UCrv(["Rate and Review Lawyer"])
+    end
+    User --- UC1
+    User --- UC2
+    User --- UC3
+    User --- UC4
+    User --- UC5
+    User --- UC6
+    User --- UC7
+    UC3 -. "include" .-> UCv
+    UC4 -. "include" .-> UCck
+    UC3 -. "include" .-> UC2
+    UCrv -. "extend" .-> UC7
+    UC3 --- AI
+    UC4 --- AI

@@ -1,0 +1,26 @@
+sequenceDiagram
+    autonumber
+    actor A as Admin
+    participant FE as Next.js (Admin Portal)
+    participant KB as FastAPI (Knowledge Base Builder)
+    participant PDF as PyMuPDF / OCR
+    participant EMB as Sentence Transformers
+    participant QD as Qdrant
+    participant DB as MongoDB
+    A->>FE: Upload official text + metadata
+    FE->>KB: POST /admin/sources
+    KB->>DB: Insert source (status = processing)
+    KB->>PDF: Extract text
+    PDF-->>KB: Text
+    KB->>KB: Split into section-wise chunks + metadata
+    loop for each chunk
+        KB->>EMB: Embed chunk text
+        EMB-->>KB: Vector
+        KB->>QD: Upsert point (vector, payload: chunk id, area, topic)
+        KB->>DB: Insert chunk record
+    end
+    KB->>DB: Source status = awaiting review
+    KB-->>FE: Ingestion complete
+    A->>FE: Review sample chunks and mark verified
+    FE->>KB: PATCH /admin/sources/{id} (Verified)
+    KB->>DB: Source active and retrievable

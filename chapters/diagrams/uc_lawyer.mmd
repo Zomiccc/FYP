@@ -1,0 +1,16 @@
+flowchart LR
+    Lawyer["Lawyer"]
+    subgraph SYS["AI Legal Advisor and Analyzer: Lawyer Portal"]
+        UC1(["UC-01 Register and Authenticate"])
+        UC8(["UC-08 Manage Public Profile and Verification Request"])
+        UC9(["UC-09 Handle Consultation Requests"])
+        UC9b(["View Shared Case"])
+        UC9c(["Post Case Status Update"])
+        UC9d(["Message User"])
+    end
+    Lawyer --- UC1
+    Lawyer --- UC8
+    Lawyer --- UC9
+    UC9 -. "include" .-> UC9b
+    UC9c -. "extend" .-> UC9
+    UC9d -. "extend" .-> UC9

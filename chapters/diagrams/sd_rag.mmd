@@ -1,0 +1,34 @@
+sequenceDiagram
+    autonumber
+    actor U as User
+    participant FE as Next.js Frontend
+    participant RAG as FastAPI (RAG Service)
+    participant EMB as Sentence Transformers
+    participant QD as Qdrant
+    participant LLM as Open-source LLM
+    participant CC as Citation Checker
+    participant DB as MongoDB
+    U->>FE: Request guidance
+    FE->>RAG: POST /cases/{id}/guidance
+    RAG->>DB: Load case facts and history
+    RAG->>EMB: Embed query
+    EMB-->>RAG: Query vector
+    RAG->>QD: Similarity search (top-k, filter: legal area)
+    QD-->>RAG: Sections + payload (source, section, score)
+    alt no section above threshold
+        RAG-->>FE: "No verified source found" + lawyer suggestion
+    else relevant sections found
+        RAG->>LLM: Grounded prompt (rules + sections + facts)
+        LLM-->>RAG: Draft answer with [S1], [S2] tags
+        RAG->>CC: Verify tags against retrieved sections
+        alt citations valid
+            CC-->>RAG: Pass
+            RAG->>DB: Save guidance + citations + checklist
+            RAG-->>FE: Answer, sources, checklist, disclaimer
+        else citation check fails
+            CC-->>RAG: Fail
+            RAG->>LLM: Regenerate once
+            RAG-->>FE: Answer if it passes, otherwise withheld
+        end
+    end
+    FE-->>U: Display result

@@ -1,0 +1,29 @@
+sequenceDiagram
+    autonumber
+    actor P as User / Lawyer
+    participant FE as Next.js Frontend
+    participant API as FastAPI (Auth Service)
+    participant DB as MongoDB
+    participant EM as Email Service
+    P->>FE: Fill registration form (role, details)
+    FE->>API: POST /auth/register
+    API->>DB: Check email exists
+    DB-->>API: Not found
+    API->>API: Hash password (bcrypt/Argon2)
+    API->>DB: Insert account (status = unverified)
+    API->>EM: Send verification link
+    API-->>FE: 201 Created
+    P->>FE: Open verification link
+    FE->>API: GET /auth/verify?token=...
+    API->>DB: Set status = active
+    P->>FE: Enter email and password
+    FE->>API: POST /auth/login
+    API->>DB: Fetch account by email
+    DB-->>API: Account (hash, role, status)
+    alt valid credentials and active
+        API-->>FE: Access token + role
+        FE-->>P: Open role dashboard
+    else invalid or suspended
+        API-->>FE: 401 / 403 error
+        FE-->>P: Show error message
+    end

@@ -1,0 +1,28 @@
+sequenceDiagram
+    autonumber
+    actor A as Admin
+    participant FE as Next.js (Admin Portal)
+    participant AS as FastAPI (Admin Service)
+    participant DB as MongoDB
+    participant FS as File Store
+    actor L as Lawyer
+    A->>FE: Open verification queue
+    FE->>AS: GET /admin/verifications?status=pending
+    AS->>DB: Fetch pending requests
+    DB-->>AS: Requests
+    AS-->>FE: List
+    A->>FE: Open request
+    FE->>AS: GET /admin/verifications/{id}
+    AS->>FS: Fetch licence document
+    AS-->>FE: Details + document
+    alt approve
+        A->>FE: Approve
+        FE->>AS: POST /admin/verifications/{id}/approve
+        AS->>DB: Lawyer status = Verified, list profile
+    else reject
+        A->>FE: Reject with reason
+        FE->>AS: POST /admin/verifications/{id}/reject
+        AS->>DB: Lawyer status = Rejected
+    end
+    AS->>DB: Write audit log entry
+    AS--)L: Notification of decision
