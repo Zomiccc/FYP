@@ -1,0 +1,69 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage{mathptmx}
+\usepackage[a4paper,margin=2.2cm]{geometry}
+\usepackage[table]{xcolor}
+\usepackage{enumitem,titlesec,setspace}
+\definecolor{headteal}{HTML}{1B4A4A}
+\setstretch{1.08}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+\titleformat{\section}{\normalfont\large\bfseries\color{headteal}}{\thesection}{0.5em}{}
+\titleformat{\subsection}{\normalfont\normalsize\bfseries}{\thesubsection}{0.5em}{}
+\titlespacing*{\section}{0pt}{8pt}{3pt}
+\titlespacing*{\subsection}{0pt}{6pt}{2pt}
+\setlist{itemsep=1pt,topsep=2pt,leftmargin=1.4em}
+\pagestyle{plain}
+\begin{document}
+
+\begin{center}
+{\Large\bfseries\color{headteal} AI Powered Legal Advisor and Analyzer}\\[3pt]
+{\large\bfseries Actor Domains: Definition and Scope}\\[2pt]
+{\small Muhammad Nabeel (BCS233115) \,\textperiodcentered\, Ashir Qureshi (BCS233084) \,\textperiodcentered\, Muhammad Sharjeel (BCS233113) \,\textperiodcentered\, Supervisor: Ms.\ Khadija Iftikhar}
+\end{center}
+
+\section{Overview}
+An \emph{actor domain} is the area of the system that belongs to one actor: what the actor is responsible for, which portal and data the actor can use, what the actor can do, and where the actor's authority ends. The platform has three primary actors, the \textbf{User (Citizen)}, the \textbf{Lawyer} and the \textbf{Admin}, each with a separate portal, and two secondary actors, the \textbf{AI Services} and the \textbf{Notification Service}, which work in the background. Keeping the domains separate protects user privacy, keeps legal guidance trustworthy and makes every action traceable to one responsible actor.
+
+\section{User (Citizen) Domain}
+\textbf{Definition.} A Pakistani citizen who needs to understand a property or family legal problem and may need a lawyer. The User is the owner of the case and the main beneficiary of the platform.
+
+\textbf{Responsibility.} Describing the problem truthfully, answering follow-up questions, uploading relevant documents, choosing a lawyer and deciding what to share.
+
+\textbf{Can do.} Register and manage a personal profile; create and close cases; answer follow-up questions; request AI guidance with cited sources; upload documents and complete the evidence checklist; search verified lawyers and view their public profiles; request consultations, give or revoke consent to share a case, and message the lawyer; track the case timeline; rate and review a lawyer after a completed consultation.
+
+\textbf{Owns.} Personal profile, cases, chat history, uploaded documents, consent records and reviews.
+
+\textbf{Boundary.} Sees only their own cases. Cannot see other users' data, cannot edit lawyer profiles, and cannot change the legal knowledge base. AI guidance is legal information, not legal advice.
+
+\section{Lawyer Domain}
+\textbf{Definition.} A legal practitioner enrolled with a bar council who offers services through the platform after the Admin has verified the enrolment details.
+
+\textbf{Responsibility.} Keeping the public profile accurate, responding to consultation requests in good time, and giving professional advice on the cases shared with them.
+
+\textbf{Can do.} Register with bar enrolment details and a licence copy; build a LinkedIn-style public profile (headline, practice areas, experience, education, languages, fees); set availability; accept, decline or reschedule consultation requests; read the case items the user consented to share; message the user; post status updates on the case timeline; mark a consultation completed; view own dashboard and rating.
+
+\textbf{Owns.} Professional profile, availability settings, messages sent and status updates posted.
+
+\textbf{Boundary.} Appears in the directory only when verified. Sees a case only after the user gives consent and only while that consent is active; personal contact details are released only after a consultation is accepted. Cannot browse other cases, change user data or edit reviews.
+
+\section{Admin Domain}
+\textbf{Definition.} A platform administrator who governs the system and is responsible for its trustworthiness.
+
+\textbf{Responsibility.} Ensuring that only genuine lawyers and verified legal sources are used, that accounts and content follow platform rules, and that administrative actions are recorded.
+
+\textbf{Can do.} Review and approve, reject or query lawyer verification requests; add, verify, re-index and retire legal sources in the knowledge base; search, suspend, reactivate and remove accounts; moderate reported profile content and reviews; view platform statistics and the audit log.
+
+\textbf{Owns.} Verification decisions, the list of verified legal sources, account status and the audit log.
+
+\textbf{Boundary.} Does not take part in individual cases, does not give legal guidance and does not act on a user's behalf. Case content is accessed only for moderation, and every administrative action is written to the audit log.
+
+\section{Secondary Actor Domains}
+\textbf{AI Services (System).} The embedding model (Sentence Transformers), the Qdrant vector database, the open-source LLM, the citation checker, PyMuPDF and OCR. Their domain is automated processing: classifying problems, finding missing facts, retrieving law sections, generating and checking cited answers, and extracting text and clauses from documents. They act only when a human actor triggers them, use only Admin-verified sources, and cannot change accounts, consent or case ownership.
+
+\textbf{Notification Service.} Sends in-app and email notifications for verification, consultation and status events. It only delivers messages and makes no decisions.
+
+\section{How the Domains Connect}
+The domains depend on one another in a fixed order. The \textbf{Admin} verifies legal sources, which the \textbf{AI Services} then use to guide the \textbf{User}. The Admin also verifies \textbf{Lawyers}, who then become visible to Users. A User's consent is the only way a Lawyer can enter that User's case, and the User can withdraw it at any time. Each actor works in the platform's two legal domains, property disputes and family disputes, and no actor can act outside the permissions of their own domain.
+
+\end{document}
